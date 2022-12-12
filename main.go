@@ -35,6 +35,7 @@ func main() {
 	configFile, err := ioutil.ReadFile("config.yaml")
 	if err != nil {
 		newConf := Config{
+			Bind: ":8080",
 			Entries: []LOLEntry{
 				{
 					Command: "g",
@@ -51,13 +52,18 @@ func main() {
 		configFile, _ = ioutil.ReadFile("config.yaml")
 
 	}
+
 	err = yaml.Unmarshal(configFile, &currentConfig)
 	if err != nil {
 		log.Fatal("unable to read config", err)
 	}
+	if currentConfig.Bind == "" {
+		currentConfig.Bind = ":8080"
+	}
 	r := mux.NewRouter()
 	r.HandleFunc("/{command}", InvokeLOL)
 	http.ListenAndServe(currentConfig.Bind, r)
+	log.Println("Listening on", currentConfig.Bind)
 }
 
 func InvokeLOL(w http.ResponseWriter, r *http.Request) {
@@ -78,8 +84,9 @@ func InvokeLOL(w http.ResponseWriter, r *http.Request) {
 	var t T
 	m, okm := reflect.TypeOf(&t).MethodByName(entry.Type)
 	if !okm {
+
 		w.WriteHeader(404)
-		return
+		log.Fatal("no method found", entry.Type)
 	}
 	var in = make([]reflect.Value, 5)
 	in[0] = reflect.ValueOf(&t)
@@ -93,16 +100,20 @@ func InvokeLOL(w http.ResponseWriter, r *http.Request) {
 
 func (t *T) Redirect(w http.ResponseWriter, r *http.Request, url string, parts []string) {
 	redir := fmt.Sprintf(url, strings.Join(parts[1:], " "))
+	log.Println("redirecting to", redir)
 	w.Header().Add("Location", redir)
 	w.WriteHeader(302)
 }
 
 func (t *T) Alias(w http.ResponseWriter, r *http.Request, url string, parts []string) {
 	w.Header().Add("Location", url)
+	log.Println("redirecting to", url)
 	w.WriteHeader(302)
 }
+
 func (t *T) RedirectVarArgs(w http.ResponseWriter, r *http.Request, url string, parts ...string) {
 	redir := fmt.Sprintf(url, parts)
 	w.Header().Add("Location", redir)
+	log.Println("redirecting to", url)
 	w.WriteHeader(302)
 }
