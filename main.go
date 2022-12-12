@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"io/fs"
-	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"reflect"
 	"strings"
 
@@ -32,7 +32,7 @@ type T struct{}
 func main() {
 	cache = make(map[string]LOLEntry)
 
-	configFile, err := ioutil.ReadFile("config.yaml")
+	configFile, err := os.ReadFile("config.yaml")
 	if err != nil {
 		newConf := Config{
 			Bind: ":8080",
@@ -48,8 +48,8 @@ func main() {
 		if err != nil {
 			log.Fatal("unable to write default config")
 		}
-		ioutil.WriteFile("config.yaml", bytes, fs.ModePerm)
-		configFile, _ = ioutil.ReadFile("config.yaml")
+		os.WriteFile("config.yaml", bytes, fs.ModePerm)
+		configFile, _ = os.ReadFile("config.yaml")
 
 	}
 
