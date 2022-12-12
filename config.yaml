@@ -1,0 +1,8 @@
+bind: :8080
+entries:
+    - command: g
+      type: Redirect
+      value: https://www.google.com/search?q=%s
+    - command: pihole
+      type: Alias   
+      value: http://pi.hole
