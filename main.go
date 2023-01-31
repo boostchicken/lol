@@ -67,7 +67,6 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/rehash", InvokeRehash)
 	r.HandleFunc("/{command}", InvokeLOL)
-
 	log.Println("Listening on", currentConfig.Bind)
 
 	err = http.ListenAndServe(currentConfig.Bind, r)
@@ -112,6 +111,9 @@ func InvokeRehash(w http.ResponseWriter, r *http.Request) {
 
 func InvokeLOL(w http.ResponseWriter, r *http.Request) {
 	command := mux.Vars(r)["command"]
+	if r.FormValue("q") != "" {
+		command = r.FormValue("q")
+	}
 	parts := strings.Split(command, " ")
 	entry, ok := cache[parts[0]]
 	if !ok {
