@@ -1,4 +1,4 @@
-FROM golang:1.19-alpine
+FROM golang:1.19-alpine as builder
 ENV GOOS=linux
 ENV GOARCH=amd64
 
@@ -11,6 +11,8 @@ COPY *.go ./
 RUN go mod download 
 RUN go build -o /app/boostchickenlol
 
-EXPOSE 8080
-VOLUME /app/config.yaml
-CMD [ "/app/boostchickenlol" ]
+FROM golang:1.19-alpine 
+COPY --from=builder /app/boostchickenlol /go/boostchickenlol
+COPY config.yaml /go
+
+CMD [ "/go/boostchickenlol" ]

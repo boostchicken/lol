@@ -58,7 +58,7 @@ func main() {
 		log.Fatal("unable to read config", err)
 	}
 	if currentConfig.Bind == "" {
-		currentConfig.Bind = ":8080"
+		currentConfig.Bind = "0.0.0.0:8080"
 	}
 	r := mux.NewRouter()
 	r.HandleFunc("/{command}", InvokeLOL)

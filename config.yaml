@@ -1,4 +1,4 @@
-bind: ":1337"
+bind: "0.0.0.0:1337"
 entries:
     - command: g
       type: Redirect
