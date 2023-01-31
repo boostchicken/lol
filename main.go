@@ -26,11 +26,13 @@ type Config struct {
 
 var currentConfig Config
 var cache map[string]LOLEntry
+var reflectionCache map[string]reflect.Method
 
-type T struct{}
+type actions struct{}
+
+var t actions
 
 func main() {
-	cache = make(map[string]LOLEntry)
 
 	configFile, err := os.ReadFile("config.yaml")
 	if err != nil {
@@ -49,7 +51,7 @@ func main() {
 			log.Fatal("unable to write default config")
 		}
 		os.WriteFile("config.yaml", bytes, fs.ModePerm)
-		configFile, _ = os.ReadFile("config.yaml")
+		configFile = bytes
 
 	}
 
@@ -60,10 +62,52 @@ func main() {
 	if currentConfig.Bind == "" {
 		currentConfig.Bind = "0.0.0.0:8080"
 	}
+	currentConfig.CacheConfig()
+
 	r := mux.NewRouter()
+	r.HandleFunc("/rehash", InvokeRehash)
 	r.HandleFunc("/{command}", InvokeLOL)
-	http.ListenAndServe(currentConfig.Bind, r)
+
 	log.Println("Listening on", currentConfig.Bind)
+
+	err = http.ListenAndServe(currentConfig.Bind, r)
+	if err != nil && err != http.ErrServerClosed {
+		log.Fatal("unable to start server", err)
+	}
+}
+
+func (c *Config) RehashConfig() {
+	configFile, err := os.ReadFile("config.yaml")
+	if err != nil {
+		log.Fatal("unable to read config", err)
+	}
+	err = yaml.Unmarshal(configFile, &currentConfig)
+	if err != nil {
+		log.Fatal("unable to read config", err)
+	}
+	c.CacheConfig()
+}
+
+func (c *Config) CacheConfig() {
+	cache = make(map[string]LOLEntry)
+	reflectionCache = make(map[string]reflect.Method)
+
+	for _, e := range c.Entries {
+		cache[e.Command] = e
+		_, okm := reflectionCache[e.Type]
+		if !okm {
+
+			method, okr := reflect.TypeOf(&t).MethodByName(e.Type)
+			if !okr {
+				log.Fatalf("Unable to find function %s", e.Type)
+			}
+			reflectionCache[e.Type] = method
+		}
+	}
+}
+
+func InvokeRehash(w http.ResponseWriter, r *http.Request) {
+	currentConfig.RehashConfig()
 }
 
 func InvokeLOL(w http.ResponseWriter, r *http.Request) {
@@ -71,49 +115,35 @@ func InvokeLOL(w http.ResponseWriter, r *http.Request) {
 	parts := strings.Split(command, " ")
 	entry, ok := cache[parts[0]]
 	if !ok {
-		for _, e := range currentConfig.Entries {
-			cache[e.Command] = e
-		}
-		val, ok2 := cache[parts[0]]
-		if !ok2 {
-			w.WriteHeader(404)
-			return
-		}
-		entry = val
+		http.NotFound(w, r)
+		return
 	}
-	var t T
-	m, okm := reflect.TypeOf(&t).MethodByName(entry.Type)
-	if !okm {
 
-		w.WriteHeader(404)
-		log.Fatal("no method found", entry.Type)
+	m, mok := reflectionCache[entry.Type]
+	if !mok {
+		http.NotFound(w, r)
+		return
 	}
-	var in = make([]reflect.Value, 5)
-	in[0] = reflect.ValueOf(&t)
-	in[1] = reflect.ValueOf(w)
-	in[2] = reflect.ValueOf(r)
-	in[3] = reflect.ValueOf(strings.TrimSpace(entry.Value))
-	in[4] = reflect.ValueOf(parts)
 
-	m.Func.Call(in)
+	m.Func.Call([]reflect.Value{
+		reflect.ValueOf(&t),
+		reflect.ValueOf(w),
+		reflect.ValueOf(r),
+		reflect.ValueOf(strings.TrimSpace(entry.Value)),
+		reflect.ValueOf(parts),
+	})
 }
 
-func (t *T) Redirect(w http.ResponseWriter, r *http.Request, url string, parts []string) {
+func (t *actions) Redirect(w http.ResponseWriter, r *http.Request, url string, parts []string) {
 	redir := fmt.Sprintf(url, strings.Join(parts[1:], " "))
-	log.Println("redirecting to", redir)
-	w.Header().Add("Location", redir)
-	w.WriteHeader(302)
+	http.Redirect(w, r, redir, http.StatusFound)
 }
 
-func (t *T) Alias(w http.ResponseWriter, r *http.Request, url string, parts []string) {
-	w.Header().Add("Location", url)
-	log.Println("redirecting to", url)
-	w.WriteHeader(302)
+func (t *actions) Alias(w http.ResponseWriter, r *http.Request, url string, parts []string) {
+	http.Redirect(w, r, url, http.StatusMovedPermanently)
 }
 
-func (t *T) RedirectVarArgs(w http.ResponseWriter, r *http.Request, url string, parts ...string) {
+func (t *actions) RedirectVarArgs(w http.ResponseWriter, r *http.Request, url string, parts ...string) {
 	redir := fmt.Sprintf(url, parts)
-	w.Header().Add("Location", redir)
-	log.Println("redirecting to", url)
-	w.WriteHeader(302)
+	http.Redirect(w, r, redir, http.StatusFound)
 }

@@ -1,4 +1,4 @@
-bind: "0.0.0.0:1337"
+bind: "0.0.0.0:1338"
 entries:
     - command: g
       type: Redirect
@@ -6,3 +6,4 @@ entries:
     - command: pihole
       type: Alias   
       value: http://pi.hole
+      
