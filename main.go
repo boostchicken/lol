@@ -65,7 +65,7 @@ func main() {
 	currentConfig.CacheConfig()
 
 	r := mux.NewRouter()
-	r.HandleFunc("/rehash", InvokeRehash)
+	r.HandleFunc("/rehash", InvokeRehash).Queries()
 	r.HandleFunc("/{command}", InvokeLOL)
 	log.Println("Listening on", currentConfig.Bind)
 
