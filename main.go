@@ -9,7 +9,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/gorilla/mux"
+    "github.com/gin-gonic/gin"
 	"gopkg.in/yaml.v3"
 )
 
@@ -28,16 +28,15 @@ var currentConfig Config
 var cache map[string]LOLEntry
 var reflectionCache map[string]reflect.Method
 
-type actions struct{}
-
+type actions struct{
+}
 var t actions
 
 func main() {
-
 	configFile, err := os.ReadFile("config.yaml")
 	if err != nil {
 		newConf := Config{
-			Bind: ":8080",
+			Bind: "0.0.0.0:8080",
 			Entries: []LOLEntry{
 				{
 					Command: "g",
@@ -50,7 +49,7 @@ func main() {
 		if err != nil {
 			log.Fatal("unable to write default config")
 		}
-		os.WriteFile("config.yaml", bytes, fs.ModePerm)
+        _ = os.WriteFile("config.yaml", bytes, fs.ModePerm)
 		configFile = bytes
 
 	}
@@ -63,13 +62,12 @@ func main() {
 		currentConfig.Bind = "0.0.0.0:8080"
 	}
 	currentConfig.CacheConfig()
-
-	r := mux.NewRouter()
-	r.HandleFunc("/rehash", InvokeRehash).Queries()
-	r.HandleFunc("/{command}", InvokeLOL)
+    gin.SetMode(gin.ReleaseMode)
+    r := gin.Default()
+    r.GET("/rehash", InvokeRehash).GET("/:command", InvokeLOL)
 	log.Println("Listening on", currentConfig.Bind)
 
-	err = http.ListenAndServe(currentConfig.Bind, r)
+	err = r.Run(currentConfig.Bind)
 	if err != nil && err != http.ErrServerClosed {
 		log.Fatal("unable to start server", err)
 	}
@@ -105,52 +103,54 @@ func (c *Config) CacheConfig() {
 	}
 }
 
-func InvokeRehash(w http.ResponseWriter, r *http.Request) {
+func InvokeRehash(c *gin.Context) {
 	currentConfig.RehashConfig()
+    c.YAML(200, gin.H{
+        "message": "Rehashed",
+        })
 }
 
-func InvokeLOL(w http.ResponseWriter, r *http.Request) {
-	command := mux.Vars(r)["command"]
-	if r.FormValue("q") != "" {
-		command = r.FormValue("q")
+func InvokeLOL(c *gin.Context) {
+	command := c.Param("command")
+	if c.Query("q") != "" {
+        command = c.Query("q")
 	}
 	parts := strings.Split(command, " ")
 	entry, ok := cache[parts[0]]
 	if !ok {
         if google, search := cache["g"]; search {
             redir := fmt.Sprintf(google.Value, strings.Join(parts, " "))
-            http.Redirect(w, r, redir, http.StatusFound)
+            c.Redirect(http.StatusFound, redir)
         } else {
-            http.NotFound(w, r)
+            c.AbortWithError(http.StatusNotFound, fmt.Errorf("No endpoint found"))
             return
         }
 	}
 
 	m, mok := reflectionCache[entry.Type]
 	if !mok {
-		http.NotFound(w, r)
+        c.AbortWithError(http.StatusNotFound, fmt.Errorf("No endpoint found"))
 		return
 	}
 
 	m.Func.Call([]reflect.Value{
 		reflect.ValueOf(&t),
-		reflect.ValueOf(w),
-		reflect.ValueOf(r),
+		reflect.ValueOf(c),
 		reflect.ValueOf(strings.TrimSpace(entry.Value)),
 		reflect.ValueOf(parts),
 	})
 }
 
-func (t *actions) Redirect(w http.ResponseWriter, r *http.Request, url string, parts []string) {
-	redir := fmt.Sprintf(url, strings.Join(parts[1:], " "))
-	http.Redirect(w, r, redir, http.StatusFound)
+func (t *actions) Redirect(c *gin.Context, url string, parts []string) {
+    redir := fmt.Sprintf(url, strings.Join(parts[1:], " "))
+    c.Redirect(http.StatusFound, redir )
 }
 
-func (t *actions) Alias(w http.ResponseWriter, r *http.Request, url string, parts []string) {
-	http.Redirect(w, r, url, http.StatusMovedPermanently)
+func (t *actions) Alias(c *gin.Context, url string, _ []string) {
+    c.Redirect(http.StatusMovedPermanently, url)
 }
 
-func (t *actions) RedirectVarArgs(w http.ResponseWriter, r *http.Request, url string, parts ...string) {
+func (t *actions) RedirectVarArgs(c *gin.Context, url string, parts ...string) {
 	redir := fmt.Sprintf(url, parts)
-	http.Redirect(w, r, redir, http.StatusFound)
+    c.Redirect(http.StatusFound, redir )
 }
