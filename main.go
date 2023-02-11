@@ -117,8 +117,13 @@ func InvokeLOL(w http.ResponseWriter, r *http.Request) {
 	parts := strings.Split(command, " ")
 	entry, ok := cache[parts[0]]
 	if !ok {
-		http.NotFound(w, r)
-		return
+        if google, search := cache["g"]; search {
+            redir := fmt.Sprintf(google.Value, strings.Join(parts, " "))
+            http.Redirect(w, r, redir, http.StatusFound)
+        } else {
+            http.NotFound(w, r)
+            return
+        }
 	}
 
 	m, mok := reflectionCache[entry.Type]
