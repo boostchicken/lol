@@ -9,7 +9,7 @@ import (
 	"reflect"
 	"strings"
 
-    "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 	"gopkg.in/yaml.v3"
 )
 
@@ -28,8 +28,9 @@ var currentConfig Config
 var cache map[string]LOLEntry
 var reflectionCache map[string]reflect.Method
 
-type actions struct{
+type actions struct {
 }
+
 var t actions
 
 func main() {
@@ -49,7 +50,7 @@ func main() {
 		if err != nil {
 			log.Fatal("unable to write default config")
 		}
-        _ = os.WriteFile("config.yaml", bytes, fs.ModePerm)
+		_ = os.WriteFile("config.yaml", bytes, fs.ModePerm)
 		configFile = bytes
 
 	}
@@ -62,9 +63,9 @@ func main() {
 		currentConfig.Bind = "0.0.0.0:8080"
 	}
 	currentConfig.CacheConfig()
-    gin.SetMode(gin.ReleaseMode)
-    r := gin.Default()
-    r.GET("/rehash", InvokeRehash).GET("/:command", InvokeLOL)
+	gin.SetMode(gin.ReleaseMode)
+	r := gin.Default()
+	r.GET("/rehash", InvokeRehash).GET("/:command", InvokeLOL)
 	log.Println("Listening on", currentConfig.Bind)
 
 	err = r.Run(currentConfig.Bind)
@@ -105,31 +106,31 @@ func (c *Config) CacheConfig() {
 
 func InvokeRehash(c *gin.Context) {
 	currentConfig.RehashConfig()
-    c.YAML(200, gin.H{
-        "message": "Rehashed",
-        })
+	c.YAML(200, gin.H{
+		"message": "Rehashed",
+	})
 }
 
 func InvokeLOL(c *gin.Context) {
 	command := c.Param("command")
 	if c.Query("q") != "" {
-        command = c.Query("q")
+		command = c.Query("q")
 	}
 	parts := strings.Split(command, " ")
 	entry, ok := cache[parts[0]]
 	if !ok {
-        if google, search := cache["g"]; search {
-            redir := fmt.Sprintf(google.Value, strings.Join(parts, " "))
-            c.Redirect(http.StatusFound, redir)
-        } else {
-            c.AbortWithError(http.StatusNotFound, fmt.Errorf("No endpoint found"))
-            return
-        }
+		if google, search := cache["g"]; search {
+			redir := fmt.Sprintf(google.Value, strings.Join(parts, " "))
+			c.Redirect(http.StatusFound, redir)
+		} else {
+			c.AbortWithError(http.StatusNotFound, fmt.Errorf("No endpoint found"))
+			return
+		}
 	}
 
 	m, mok := reflectionCache[entry.Type]
 	if !mok {
-        c.AbortWithError(http.StatusNotFound, fmt.Errorf("No endpoint found"))
+		c.AbortWithError(http.StatusNotFound, fmt.Errorf("No endpoint found"))
 		return
 	}
 
@@ -142,15 +143,15 @@ func InvokeLOL(c *gin.Context) {
 }
 
 func (t *actions) Redirect(c *gin.Context, url string, parts []string) {
-    redir := fmt.Sprintf(url, strings.Join(parts[1:], " "))
-    c.Redirect(http.StatusFound, redir )
+	redir := fmt.Sprintf(url, strings.Join(parts[1:], " "))
+	c.Redirect(http.StatusFound, redir)
 }
 
 func (t *actions) Alias(c *gin.Context, url string, _ []string) {
-    c.Redirect(http.StatusMovedPermanently, url)
+	c.Redirect(http.StatusMovedPermanently, url)
 }
 
 func (t *actions) RedirectVarArgs(c *gin.Context, url string, parts ...string) {
 	redir := fmt.Sprintf(url, parts)
-    c.Redirect(http.StatusFound, redir )
+	c.Redirect(http.StatusFound, redir)
 }

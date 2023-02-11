@@ -1,4 +1,4 @@
-module github.com/boostchicken/bunnylol
+module github.com/boostchicken/lol
 
 go 1.19
 
