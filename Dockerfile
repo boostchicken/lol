@@ -1,6 +1,4 @@
-FROM golang:1.21-alpine as builder
-ENV GOOS=linux
-ENV GOARCH=amd64
+FROM golang:1.20.1-alpine3.17 as builder
 
 RUN mkdir -p /app
 WORKDIR /app
@@ -10,7 +8,7 @@ COPY go.sum ./
 COPY *.go ./
 RUN go mod download && go build -o /app/boostchickenlol
 
-FROM alpine
+FROM alpine:3.17.2
 COPY --from=builder /app/boostchickenlol /go/boostchickenlol
 
 CMD [ "/go/boostchickenlol" ]
