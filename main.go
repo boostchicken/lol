@@ -123,14 +123,14 @@ func InvokeLOL(c *gin.Context) {
 			redir := fmt.Sprintf(google.Value, strings.Join(parts, " "))
 			c.Redirect(http.StatusFound, redir)
 		} else {
-			c.AbortWithError(http.StatusNotFound, fmt.Errorf("No endpoint found"))
+			c.AbortWithError(http.StatusNotFound, fmt.Errorf("no endpoint found"))
 			return
 		}
 	}
 
 	m, mok := reflectionCache[entry.Type]
 	if !mok {
-		c.AbortWithError(http.StatusNotFound, fmt.Errorf("No endpoint found"))
+		c.AbortWithError(http.StatusNotFound, fmt.Errorf("no endpoint found"))
 		return
 	}
 
