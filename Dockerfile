@@ -10,7 +10,7 @@ COPY go.sum ./
 COPY *.go ./
 RUN go mod download && go build -o /app/boostchickenlol
 
-FROM golang:1.20-alpine
+FROM alpine
 COPY --from=builder /app/boostchickenlol /go/boostchickenlol
 COPY config.yaml /go
 
