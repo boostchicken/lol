@@ -10,5 +10,6 @@ RUN go mod download && go build -o /app/boostchickenlol
 
 FROM alpine:3.17.2
 COPY --from=builder /app/boostchickenlol /go/boostchickenlol
+WORKDIR /go
 
 CMD [ "/go/boostchickenlol" ]
