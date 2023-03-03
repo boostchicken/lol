@@ -1,12 +1,11 @@
 package config
 
 import (
+	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"reflect"
-
-	"fmt"
-	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -78,10 +77,9 @@ func (t *LOLAction) RedirectVarArgs(c *gin.Context, url string, a ...any) {
 func (t *LOLAction) LOL(command string, c *gin.Context) {
 	explode := strings.Split(command, " ")
 	entry, ok := Cache[explode[0]]
-	parts := explode[1:]
 	if !ok {
 		if google, search := Cache["g"]; search {
-			redir := fmt.Sprintf(google.Value, strings.Join(parts, " "))
+			redir := fmt.Sprintf(google.Value, strings.Join(explode, " "))
 			c.Redirect(http.StatusFound, redir)
 		} else {
 			c.AbortWithError(http.StatusNotFound, fmt.Errorf("no endpoint found"))
@@ -96,7 +94,6 @@ func (t *LOLAction) LOL(command string, c *gin.Context) {
 	}
 
 	if strings.Contains(entry.Type, "VarArgs") {
-
 		vars := explode[1:]
 		var new = make([]interface{}, len(vars))
 		for i, v := range vars {
@@ -113,7 +110,7 @@ func (t *LOLAction) LOL(command string, c *gin.Context) {
 			reflect.ValueOf(t),
 			reflect.ValueOf(c),
 			reflect.ValueOf(strings.TrimSpace(entry.Value)),
-			reflect.ValueOf(parts),
+			reflect.ValueOf(explode[0:]),
 		})
 	}
 

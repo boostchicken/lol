@@ -6,9 +6,10 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/boostchicken/lol/config"
 	"github.com/gin-gonic/gin"
 	"gopkg.in/yaml.v3"
+
+	"github.com/boostchicken/lol/config"
 )
 
 func main() {
@@ -42,7 +43,7 @@ func main() {
 	config.CurrentConfig.CacheConfig()
 	gin.SetMode(gin.DebugMode)
 	r := gin.Default()
-	r.GET("/rehash", InvokeRehash).GET("/config", RenderConfigYAML).GET("/:command", Invoke)
+	r.GET("/rehash", InvokeRehash).GET("/config", RenderConfigYAML).GET("/", Invoke).GET("/:command").PUT("/config", updateConfig)
 	log.Println("Listening on", config.CurrentConfig.Bind)
 
 	err4 := r.Run(config.CurrentConfig.Bind)
@@ -55,6 +56,12 @@ func RenderConfigYAML(c *gin.Context) {
 	c.YAML(200, config.CurrentConfig)
 }
 
+func updateConfig(c *gin.Context) {
+	c.BindHeader(config.CurrentConfig)
+	config.CurrentConfig.RehashConfig()
+	c.YAML(200, gin.H{"message": "Updated"})
+}
+
 func InvokeRehash(c *gin.Context) {
 	config.CurrentConfig.RehashConfig()
 	c.YAML(200, gin.H{
@@ -65,6 +72,17 @@ func InvokeRehash(c *gin.Context) {
 var t config.LOLAction = config.LOLAction{}
 
 func Invoke(c *gin.Context) {
-	command := c.Param("command")
+	command, ok := c.Params.Get("command")
+	if !ok {
+		q, qok := c.GetQuery("q")
+		if !qok {
+			c.YAML(501, gin.H{
+				"message": "No command provided",
+			})
+			return
+		}
+		t.LOL(q, c)
+		return
+	}
 	t.LOL(command, c)
 }
