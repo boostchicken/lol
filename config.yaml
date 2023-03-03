@@ -1,9 +1,12 @@
-bind: "0.0.0.0:8080"
-entries:
-    - command: g
-      type: Redirect
-      value: https://www.google.com/search?q=%s
-    - command: pihole
-      type: Alias   
-      value: http://pi.hole
-      
+---
+bind: "0.0.0.0:6969"
+entries: 
+  - command: g
+    type: Redirect
+    value: https://www.google.com/search?q=%s
+  - command: github
+    type: RedirectVarArgs
+    value: https://www.github.com/%s/%s
+  - command: pihole
+    type: Alias   
+    value: http://pi.hole

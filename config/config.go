@@ -76,8 +76,9 @@ func (t *LOLAction) RedirectVarArgs(c *gin.Context, url string, a ...any) {
 }
 
 func (t *LOLAction) LOL(command string, c *gin.Context) {
+	explode := strings.Split(command, " ")
+	entry, ok := Cache[explode[0]]
 	parts := strings.SplitAfterN(command, " ", 1)
-	entry, ok := Cache[parts[0]]
 	if !ok {
 		if google, search := Cache["g"]; search {
 			redir := fmt.Sprintf(google.Value, strings.Join(parts, " "))
@@ -94,23 +95,25 @@ func (t *LOLAction) LOL(command string, c *gin.Context) {
 		return
 	}
 
-	is := make([]interface{}, len(parts))
-	for i, v := range parts {
-		is[i] = v
-	}
-	if entry.Type == "RedirectVarArgs" {
+	if strings.Contains(entry.Type, "VarArgs") {
+
+		vars := explode[1:]
+		var new = make([]interface{}, len(vars))
+		for i, v := range vars {
+			new[i] = interface{}(v) // or new[i] = v
+		}
 		m.Func.CallSlice([]reflect.Value{
 			reflect.ValueOf(t),
 			reflect.ValueOf(c),
 			reflect.ValueOf(strings.TrimSpace(entry.Value)),
-			reflect.ValueOf(is),
+			reflect.ValueOf(new),
 		})
 	} else {
 		m.Func.Call([]reflect.Value{
 			reflect.ValueOf(t),
 			reflect.ValueOf(c),
 			reflect.ValueOf(strings.TrimSpace(entry.Value)),
-			reflect.ValueOf(is),
+			reflect.ValueOf(parts),
 		})
 	}
 

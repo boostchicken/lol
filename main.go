@@ -24,32 +24,35 @@ func main() {
 				},
 			},
 		}
-		bytes, err := yaml.Marshal(newConf)
-		if err != nil {
+		bytes, err2 := yaml.Marshal(newConf)
+		if err2 != nil {
 			log.Fatal("unable to write default config")
 		}
 		_ = os.WriteFile("config.yaml", bytes, fs.ModePerm)
 		configFile = bytes
-
 	}
 
-	err = yaml.Unmarshal(configFile, &config.CurrentConfig)
-	if err != nil {
+	err3 := yaml.Unmarshal(configFile, &config.CurrentConfig)
+	if err3 != nil {
 		log.Fatal("unable to read config", err)
 	}
-	if config.CurrentConfig.Bind == "" {
+	if len(config.CurrentConfig.Bind) == 0 {
 		config.CurrentConfig.Bind = "0.0.0.0:8080"
 	}
 	config.CurrentConfig.CacheConfig()
-	gin.SetMode(gin.ReleaseMode)
+	gin.SetMode(gin.DebugMode)
 	r := gin.Default()
-	r.GET("/rehash", InvokeRehash).GET("/:command", Invoke)
+	r.GET("/rehash", InvokeRehash).GET("/config", RenderConfigYAML).GET("/:command", Invoke)
 	log.Println("Listening on", config.CurrentConfig.Bind)
 
-	err = r.Run(config.CurrentConfig.Bind)
-	if err != nil && err != http.ErrServerClosed {
+	err4 := r.Run(config.CurrentConfig.Bind)
+	if err4 != nil && err4 != http.ErrServerClosed {
 		log.Fatal("unable to start server", err)
 	}
+}
+
+func RenderConfigYAML(c *gin.Context) {
+	c.YAML(200, config.CurrentConfig)
 }
 
 func InvokeRehash(c *gin.Context) {
@@ -63,8 +66,5 @@ var t config.LOLAction = config.LOLAction{}
 
 func Invoke(c *gin.Context) {
 	command := c.Param("command")
-	if c.Query("q") != "" {
-		command = c.Query("q")
-	}
 	t.LOL(command, c)
 }
