@@ -3,7 +3,7 @@ module github.com/boostchicken/lol
 go 1.20
 
 require (
-	github.com/boostchicken/lol/config v0.0.0-00010101000000-000000000000
+	github.com/boostchicken/lol/config v0.0.0-20230303105626-89d573403210
 	github.com/gin-gonic/gin v1.9.0
 	gopkg.in/yaml.v3 v3.0.1
 )

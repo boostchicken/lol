@@ -41,7 +41,12 @@ func main() {
 		config.CurrentConfig.Bind = "0.0.0.0:8080"
 	}
 	config.CurrentConfig.CacheConfig()
-	gin.SetMode(gin.DebugMode)
+	if(os.Args[1] == "debug") {
+		gin.SetMode(gin.DebugMode)
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
 	r := gin.Default()
 	r.GET("/rehash", InvokeRehash).GET("/config", RenderConfigYAML).GET("/", Invoke).GET("/:command").PUT("/config", updateConfig)
 	log.Println("Listening on", config.CurrentConfig.Bind)
