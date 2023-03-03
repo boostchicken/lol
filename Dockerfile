@@ -2,12 +2,16 @@ FROM golang:1.20.1-alpine3.17 as builder
 RUN mkdir -p /app
 WORKDIR /app
 
-COPY go.* ./
-COPY *.go ./
-COPY config /app/config
+COPY ./src/ /app
+RUN go work sync
+WORKDIR /app/cmd/lol
 RUN go mod tidy
 RUN go mod download 
-RUN go build -ldflags "-s -w"
+WORKDIR /app/internal/config
+RUN go mod tidy
+RUN go mod download 
+WORKDIR /app
+RUN go build -ldflags "-s -w" -o /app/lol ./cmd/lol/main.go 
 
 FROM alpine:3.17.2
 COPY --from=builder /app/lol /go/boostchickenlol
