@@ -78,7 +78,7 @@ func (t *LOLAction) RedirectVarArgs(c *gin.Context, url string, a ...any) {
 func (t *LOLAction) LOL(command string, c *gin.Context) {
 	explode := strings.Split(command, " ")
 	entry, ok := Cache[explode[0]]
-	parts := strings.SplitAfterN(command, " ", 1)
+	parts := explode[1:]
 	if !ok {
 		if google, search := Cache["g"]; search {
 			redir := fmt.Sprintf(google.Value, strings.Join(parts, " "))
