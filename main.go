@@ -1,44 +1,22 @@
 package main
 
 import (
-	"fmt"
 	"io/fs"
 	"log"
 	"net/http"
 	"os"
-	"reflect"
-	"strings"
 
+	"github.com/boostchicken/lol/config"
 	"github.com/gin-gonic/gin"
 	"gopkg.in/yaml.v3"
 )
 
-type LOLEntry struct {
-	Command string
-	Type    string
-	Value   string
-}
-
-type Config struct {
-	Bind    string
-	Entries []LOLEntry
-}
-
-var currentConfig Config
-var cache map[string]LOLEntry
-var reflectionCache map[string]reflect.Method
-
-type actions struct {
-}
-
-var t actions
-
 func main() {
 	configFile, err := os.ReadFile("config.yaml")
 	if err != nil {
-		newConf := Config{
+		newConf := config.Config{
 			Bind: "0.0.0.0:8080",
-			Entries: []LOLEntry{
+			Entries: []config.LOLEntry{
 				{
 					Command: "g",
 					Type:    "Redirect",
@@ -55,103 +33,38 @@ func main() {
 
 	}
 
-	err = yaml.Unmarshal(configFile, &currentConfig)
+	err = yaml.Unmarshal(configFile, &config.CurrentConfig)
 	if err != nil {
 		log.Fatal("unable to read config", err)
 	}
-	if currentConfig.Bind == "" {
-		currentConfig.Bind = "0.0.0.0:8080"
+	if config.CurrentConfig.Bind == "" {
+		config.CurrentConfig.Bind = "0.0.0.0:8080"
 	}
-	currentConfig.CacheConfig()
+	config.CurrentConfig.CacheConfig()
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
-	r.GET("/rehash", InvokeRehash).GET("/:command", InvokeLOL)
-	log.Println("Listening on", currentConfig.Bind)
+	r.GET("/rehash", InvokeRehash).GET("/:command", Invoke)
+	log.Println("Listening on", config.CurrentConfig.Bind)
 
-	err = r.Run(currentConfig.Bind)
+	err = r.Run(config.CurrentConfig.Bind)
 	if err != nil && err != http.ErrServerClosed {
 		log.Fatal("unable to start server", err)
 	}
 }
 
-func (c *Config) RehashConfig() {
-	configFile, err := os.ReadFile("config.yaml")
-	if err != nil {
-		log.Fatal("unable to read config", err)
-	}
-	err = yaml.Unmarshal(configFile, &currentConfig)
-	if err != nil {
-		log.Fatal("unable to read config", err)
-	}
-	c.CacheConfig()
-}
-
-func (c *Config) CacheConfig() {
-	cache = make(map[string]LOLEntry)
-	reflectionCache = make(map[string]reflect.Method)
-
-	for _, e := range c.Entries {
-		cache[e.Command] = e
-		_, okm := reflectionCache[e.Type]
-		if !okm {
-
-			method, okr := reflect.TypeOf(&t).MethodByName(e.Type)
-			if !okr {
-				log.Fatalf("Unable to find function %s", e.Type)
-			}
-			reflectionCache[e.Type] = method
-		}
-	}
-}
-
 func InvokeRehash(c *gin.Context) {
-	currentConfig.RehashConfig()
+	config.CurrentConfig.RehashConfig()
 	c.YAML(200, gin.H{
 		"message": "Rehashed",
 	})
 }
 
-func InvokeLOL(c *gin.Context) {
+var t config.LOLAction = config.LOLAction{}
+
+func Invoke(c *gin.Context) {
 	command := c.Param("command")
 	if c.Query("q") != "" {
 		command = c.Query("q")
 	}
-	parts := strings.Split(command, " ")
-	entry, ok := cache[parts[0]]
-	if !ok {
-		if google, search := cache["g"]; search {
-			redir := fmt.Sprintf(google.Value, strings.Join(parts, " "))
-			c.Redirect(http.StatusFound, redir)
-		} else {
-			c.AbortWithError(http.StatusNotFound, fmt.Errorf("no endpoint found"))
-			return
-		}
-	}
-
-	m, mok := reflectionCache[entry.Type]
-	if !mok {
-		c.AbortWithError(http.StatusNotFound, fmt.Errorf("no endpoint found"))
-		return
-	}
-
-	m.Func.Call([]reflect.Value{
-		reflect.ValueOf(&t),
-		reflect.ValueOf(c),
-		reflect.ValueOf(strings.TrimSpace(entry.Value)),
-		reflect.ValueOf(parts),
-	})
-}
-
-func (t *actions) Redirect(c *gin.Context, url string, parts []string) {
-	redir := fmt.Sprintf(url, strings.Join(parts[1:], " "))
-	c.Redirect(http.StatusFound, redir)
-}
-
-func (t *actions) Alias(c *gin.Context, url string, _ []string) {
-	c.Redirect(http.StatusMovedPermanently, url)
-}
-
-func (t *actions) RedirectVarArgs(c *gin.Context, url string, parts ...string) {
-	redir := fmt.Sprintf(url, parts)
-	c.Redirect(http.StatusFound, redir)
+	t.LOL(command, c)
 }
