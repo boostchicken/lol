@@ -9,6 +9,33 @@ Default: https://127.0.0.1:6969/?q=%s
 Traefik Proxy: https://lol.boostchicken.dev/?q=%s
 ```
 
+### Config Types
+* Alias - A straight redirect to a URL, no arguments used. (e.g.)
+```yaml 
+- command: gh
+  type: Alias
+  value: https://www.github.com
+``` 
+
+gh -> http://www.github.com
+ 
+* Redirect - A redirect that accepts one argument to printf
+
+```yaml 
+- command: ghuser
+  type: Redirect
+  value: https://www.github.com/%s
+``` 
+ghuser boostchicken -> https://www.github.com/boostchicken
+
+* RedirectVarArgs - A redirect that explodes all params on space and does allows multiple args into printf
+```yaml 
+- command: ghr
+  type: RedirectVarArgs
+  value: https://www.github.com/%s/%s
+``` 
+
+ghr boostchicken lol -> https://www.github.com/boostchicken/lol
 ### Config
 *GET* /rehash 
 
