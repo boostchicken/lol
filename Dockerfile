@@ -13,7 +13,7 @@ RUN go mod download
 WORKDIR /app
 RUN go build -ldflags "-s -w" -o /app/lol ./cmd/lol/main.go 
 
-FROM alpine:3.17.2
+FROM alpine:3.17.3
 COPY --from=builder /app/lol /go/boostchickenlol
 WORKDIR /go
 
