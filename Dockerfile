@@ -12,9 +12,17 @@ RUN go mod tidy
 RUN go mod download 
 WORKDIR /app
 RUN go build -ldflags "-s -w" -o /app/lol ./cmd/lol/main.go 
+RUN npm run build
+
+
+FROM nodejs as nodejs
+COPY ui/ /app
+WORKDIR /app
+RUN npm start build --production
 
 FROM alpine:3.17.3
 COPY --from=builder /app/lol /go/boostchickenlol
+COPY --from=nodejs /app /go/ui/
 COPY ui /go/ui
 WORKDIR /go
 
