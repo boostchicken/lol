@@ -1,5 +1,5 @@
 
-RUN mkdir /appFROM golang:1.20.3-alpine3.17 as builder
+FROM golang:1.20.3-alpine3.17 as builder
 RUN mkdir -p /app
 WORKDIR /app
 
@@ -13,14 +13,11 @@ RUN go mod tidy
 RUN go mod download 
 WORKDIR /app
 RUN go build -ldflags "-s -w" -o /app/lol ./cmd/lol/main.go 
-RUN npm run build
 
 FROM node as nodejs
 RUN mkdir /app
 COPY ui/ /app
-RUN mkdir /app
 WORKDIR /app
-RUN mkdir /app
 RUN npm run build --production
 
 FROM alpine:3.17.3
