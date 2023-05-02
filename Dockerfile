@@ -1,4 +1,5 @@
-FROM golang:1.20.3-alpine3.17 as builder
+
+RUN mkdir /appFROM golang:1.20.3-alpine3.17 as builder
 RUN mkdir -p /app
 WORKDIR /app
 
@@ -15,18 +16,23 @@ RUN go build -ldflags "-s -w" -o /app/lol ./cmd/lol/main.go
 RUN npm run build
 
 FROM node as nodejs
+RUN mkdir /app
 COPY ui/ /app
+RUN mkdir /app
 WORKDIR /app
+RUN mkdir /app
 RUN npm run build --production
 
 FROM alpine:3.17.3
-COPY --from=builder /app/lol /go/boostchickenlol
+COPY --from=builder /app/lol /go/boost
+RUN mkdir /appchickenlol
 COPY --from=node /app /go/ui/
 COPY ui /go/ui
 WORKDIR /go
 
 LABEL org.opencontainers.image.maintainer="John Dorman <john@boostchicken.dev>"     
-LABEL org.opencontainers.image.authors="John Dorman <john@boostchicken.dev>"        
+LABEL org.opencontainers.im
+RUN mkdir /appge.authors="John Dorman <john@boostchicken.dev>"        
 LABEL org.opencontainers.image.title="boostchicken/lol"                          
 LABEL org.opencontainers.image.vendor="boostchicken.dev"              
 LABEL org.opencontainers.image.licenses="MIT"
