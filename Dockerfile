@@ -15,6 +15,7 @@ RUN go build -ldflags "-s -w" -o /app/lol ./cmd/lol/main.go
 
 FROM alpine:3.17.3
 COPY --from=builder /app/lol /go/boostchickenlol
+COPY ui /go/ui
 WORKDIR /go
 
 LABEL org.opencontainers.image.maintainer="John Dorman <john@boostchicken.dev>"     

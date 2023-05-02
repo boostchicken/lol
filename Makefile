@@ -13,9 +13,11 @@ lint: fmt
 vet: fmt
 	cd ./src/cmd/lol && go vet main.go
 .PHONY:vet
-
-build: vet
-	cd ./src/cmd/lol  && go build -ldflags="-s -w" -o ../../../bin/lol
+ui: vet
+	 cd ui && npm run build --production
+PHONY: ui
+build: ui
+	 cd ./src/cmd/lol/ && go build -ldflags="-s -w" -o ../../../bin/lol 
 .PHONY:build
 
 doc: build

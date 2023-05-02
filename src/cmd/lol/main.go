@@ -6,10 +6,14 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/bluele/gcache"
 	"github.com/boostchicken/internal/config"
+	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"gopkg.in/yaml.v3"
 )
+
+var l = gcache.New(250).ARC().Build()
 
 // Debug: /app/lol debug will run in debug mode
 // Release: /app/lol will run in release mode
@@ -50,12 +54,14 @@ func main() {
 	}
 
 	r := gin.Default()
-	r.GET("/rehash", InvokeRehash).GET("/config", RenderConfigYAML).GET("/", Invoke).GET("/:command").PUT("/config", updateConfig)
+	r.Use(static.Serve("/", static.LocalFile("./ui/build/", true)))
+
+	r.GET("/rehash", InvokeRehash).GET("/config", RenderConfigYAML).GET("/liveconfig", RenderConfigJSON).GET("/lol", Invoke).PUT("/config", updateConfig)
+
 	log.Println("Listening on", config.CurrentConfig.Bind)
 
 	err4 := r.Run(config.CurrentConfig.Bind)
 	if err4 != nil && err4 != http.ErrServerClosed {
-		log.Fatal("unable to start server", err)
 	}
 }
 
@@ -64,6 +70,13 @@ func main() {
 // c gin.Context
 func RenderConfigYAML(c *gin.Context) {
 	c.YAML(200, config.CurrentConfig)
+}
+
+// HTTP: GET /liveconfig
+// Renders current config as YAML
+// c gin.Context
+func RenderConfigJSON(c *gin.Context) {
+	c.JSON(200, config.CurrentConfig)
 }
 
 // HTTP: PUT /config
@@ -106,4 +119,5 @@ func Invoke(c *gin.Context) {
 		return
 	}
 	t.LOL(command, c)
+	l.Set(l.Len, command)
 }

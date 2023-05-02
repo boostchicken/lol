@@ -4,7 +4,9 @@ go 1.20
 
 require (
 	github.com/boostchicken/internal/config v0.0.0-00010101000000-000000000000
+	github.com/gin-gonic/contrib v0.0.0-20221130124618-7e01895a63f2
 	github.com/gin-gonic/gin v1.9.0
+	github.com/bluele/gcache v0.0.2
 	gopkg.in/yaml.v3 v3.0.1
 )
 

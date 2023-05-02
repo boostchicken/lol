@@ -15,3 +15,5 @@
 # vendor/
 /boostchickenlol.yaml
 __debug_bin
+bin
+build
