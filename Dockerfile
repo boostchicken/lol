@@ -31,8 +31,7 @@ COPY ui /go/ui
 WORKDIR /go
 
 LABEL org.opencontainers.image.maintainer="John Dorman <john@boostchicken.dev>"     
-LABEL org.opencontainers.im
-RUN mkdir /appge.authors="John Dorman <john@boostchicken.dev>"        
+LABEL org.opencontainers.image.authors="John Dorman <john@boostchicken.dev>"        
 LABEL org.opencontainers.image.title="boostchicken/lol"                          
 LABEL org.opencontainers.image.vendor="boostchicken.dev"              
 LABEL org.opencontainers.image.licenses="MIT"
