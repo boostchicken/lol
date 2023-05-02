@@ -14,8 +14,7 @@ WORKDIR /app
 RUN go build -ldflags "-s -w" -o /app/lol ./cmd/lol/main.go 
 RUN npm run build
 
-
-FROM nodejs as nodejs
+FROM node as nodejs
 COPY ui/ /app
 WORKDIR /app
 RUN npm start build --production
