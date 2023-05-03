@@ -6,7 +6,7 @@ A clone of Metas bunnylol service written in go, configuration is via a YAML fil
 1. Create a custom search engine in your browser of choice 
 ```
 Default: https://127.0.0.1:6969/?q=%s
-Traefik Proxy: https://lol.boostchicken.dev/?q=%s
+Traefik Proxy: https://lol.boostchicken.dev/lol?q=%s
 ```
 
 ### Config Types
