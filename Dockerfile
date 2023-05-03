@@ -16,8 +16,8 @@ RUN go build -ldflags "-s -w" -o /app/lol ./cmd/lol/main.go
 
 FROM node as nodejs
 RUN mkdir /app
-COPY ui/ /app
-WORKDIR /app
+COPY ./ui/ /app/ui
+WORKDIR /app/ui
 RUN npm run build --production
 
 FROM alpine:3.17.3
