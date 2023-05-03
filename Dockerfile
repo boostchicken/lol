@@ -23,8 +23,7 @@ RUN npm install && npm run build --production
 FROM alpine:3.17.3
 RUN mkdir /go
 COPY --from=builder /app/lol /go/boostchickenlol
-COPY --from=nodejs /app /go/ui/
-COPY ui /go
+COPY --from=nodejs /app/ui/ /go/ui/
 WORKDIR /go
 
 LABEL org.opencontainers.image.maintainer="John Dorman <john@boostchicken.dev>"     
