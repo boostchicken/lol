@@ -1,7 +1,7 @@
 name: Release Docker Image
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: {}
   release:
     types: [published]
 
@@ -40,15 +40,6 @@ jobs:
           images: | 
             boostchicken/lol
             ghcr.io/boostchicken/lol
-
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
