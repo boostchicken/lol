@@ -1,0 +1,11 @@
+{
+    "appName": {
+        "message": "boostchickenlol-extras"
+    },
+    "appShortName": {
+        "message": "boostchickenlol-extras"
+    },
+    "appDescription": {
+        "message": "Works with boostchickenlol to Autocomplete and search current commands"
+    }
+}

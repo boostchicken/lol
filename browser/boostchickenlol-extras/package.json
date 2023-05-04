@@ -1,0 +1,49 @@
+{
+    "name": "boostchickenlol-extras",
+    "description": "Works with boostchickenlol to Autocomplete and search current commands",
+    "version": "0.0.1",
+    "homepage": "https://github.com/boostchicken/lol",
+    "author": "ENTER YOUR NAME HERE",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/boostchicken/lol"
+    },
+    "scripts": {
+        "start": "xt-build -e dev -w",
+        "start:firefox": "xt-build -e dev -p firefox -w",
+        "build": "xt-build -e prod",
+        "build:firefox": "xt-build -e prod -p firefox",
+        "clean": "xt-clean",
+        "docs": "xt-docs",
+        "test": "xt-test",
+        "coverage": "nyc --reporter=lcov npm run test",
+        "sync": "xt-sync"
+    },
+    "babel": {
+        "presets": [
+            "@babel/preset-env"
+        ]
+    },
+    "eslintIgnore": [
+        "test/**/*"
+    ],
+    "devDependencies": {
+        "extension-cli": "latest"
+    },
+    "xtdocs": {
+        "source": {
+            "include": [
+                "README.md",
+                "src"
+            ]
+        }
+    },
+    "xtbuild": {
+        "js_bundles": [
+            {
+                "name": "background",
+                "src": "./src/**/*.js"
+            }
+        ]
+    }
+}
