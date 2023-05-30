@@ -1,38 +1,49 @@
-var conf = []
+let conf = {}
+
 function cache() {
     fetch("https://lol.boostchicken.dev/liveconfig")
     .then((response) => response.json())
     .then((data) => conf = data)
-    setInterval(cache,60)
+    setInterval(cache,60000)
 }   
+
+function xml_escape (text) {
+    return text.replace(/[<>&'"]/g, ch => {
+        switch (ch) {
+        case '<': return '&lt;'
+        case '>': return '&gt;'
+        case '&': return '&amp;'
+        case '\'': return '&apos;'
+        case '"': return '&quot;'
+        }
+    })
+}
+
 chrome.omnibox.onInputChanged.addListener((text, suggest) => {
-    if(conf.length == 0) {
-         cache()
-    }
-    let results =[]
-    conf.Entries.forEach(entry => {
-        let command = entry.command
-        let description = entry.description
-        let value = entry.value
-        if(command.contains(text) || description.contains(text)) {
+    const results =[]
+    for (const elm of conf.Entries) {
+        if(elm.Command.includes(text)) {
             results.push({
-                    content: `<mark>${text}</mark>`,
+                    content: text,
                     deletable: false,
-                    description: `<mark>${command}</mark> - ${description}, url: <url>${value}</url> `
+                    description: `<match>${xml_escape(elm.Command)}</match>`
+                    + '<dim>' + xml_escape(elm.Value) + '</dim>'
                 })
         }
-    });
+    }
+    console.log(results)
     suggest(results)
 });
+
+chrome.omnibox.setDefaultSuggestion({description:  "Search LoL Command"})
+
+
 chrome.omnibox.onInputEntered.addListener((text, OnInputEnteredDisposition) => {
         if (OnInputEnteredDisposition === 'currentTab') {
-            chrome.tabs.create({text});
+            chrome.tabs.create(text);
         } else {
-            chrome.tabs.update({text});
+            chrome.tabs.update(text);
         }
     });
-chrome.omnibox.setDefaultSuggestion({
-    description: 'Enter text to search command names and metadata'
-});
 
-
+cache()

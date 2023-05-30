@@ -1,7 +1,7 @@
 {
     "name": "boostchickenlol-extras",
     "description": "Works with boostchickenlol to Autocomplete and search current commands",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "homepage": "https://github.com/boostchicken/lol",
     "author": "ENTER YOUR NAME HERE",
     "repository": {
