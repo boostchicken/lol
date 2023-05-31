@@ -18,7 +18,7 @@ FROM node as nodejs
 RUN mkdir /app
 COPY ./ui/ /app/ui
 WORKDIR /app/ui
-RUN npm install react-scripts &&npm run build --production
+RUN npm install react-scripts && npm run build --production
 
 FROM alpine:3.18.0
 RUN mkdir /go

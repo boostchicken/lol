@@ -1,0 +1,47 @@
+{
+    "name": "boostchicken-omnilol",
+    "description": "Works with boostchickenlol to Autocomplete and search current commands",
+    "version": "1.0.0",
+    "homepage": "https://github.com/boostchicken/lol",
+    "author": "John D",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/boostchicken/lol"
+    },
+    "scripts": {
+        "start": "xt-build -e dev -w",
+        "start:firefox": "xt-build -e dev -p firefox -w",
+        "build": "xt-build -e prod",
+        "build:firefox": "xt-build -e prod -p firefox",
+        "clean": "xt-clean",
+        "docs": "xt-docs",
+        "sync": "xt-sync"
+    },
+    "babel": {
+        "presets": [
+            "@babel/preset-env"
+        ]
+    },
+    "eslintIgnore": [
+        "test/**/*"
+    ],
+    "devDependencies": {
+        "extension-cli": "^1.2.4"
+    },
+    "xtdocs": {
+        "source": {
+            "include": [
+                "README.md",
+                "src"
+            ]
+        }
+    },
+    "xtbuild": {
+        "js_bundles": [
+            {
+                "name": "background",
+                "src": "./src/**/*.js"
+            }
+        ]
+    }
+}
