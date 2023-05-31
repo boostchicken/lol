@@ -1,16 +1,21 @@
 {
-    "name": "boostchicken-lol-ext",
-    "short_name": "lol",
-    "description": "LOL Browser Integration",
+    "name": "boostchicken-omnilol",
+    "short_name": "omnilol",
+    "description": "Show LOL commands in omnibox",
     "homepage_url": "https://github.com/boostchicken/lol",
-    "version": "0.0.2",
-    "version_name": "0.0.2",
+    "version": "1.0.0",
+    "version_name": "1.0.0",
     "manifest_version": 3,
     "default_locale": "en",
     "minimum_chrome_version": "88",
+    "permissions": [
+        "tabs",
+        "search",
+        "storage"
+    ],
     "omnibox": { "keyword": "bl" },
     "host_permissions": [
-        "https://lol.boostchicken.dev/*"
+        "<all_urls>"
     ],
     "icons": {
         "128": "assets/img/128x128.png"
@@ -24,6 +29,6 @@
             "24": "assets/img/24x24.png",
             "32": "assets/img/32x32.png"
         },
-        "default_title": "lol"
+        "default_title": "omnilol"
     }
 }

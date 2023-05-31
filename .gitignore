@@ -17,3 +17,6 @@
 __debug_bin
 bin
 build
+release.zip
+node_modules
+dist
