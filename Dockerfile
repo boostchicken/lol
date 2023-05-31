@@ -1,5 +1,5 @@
 
-FROM golang:1.20.3-alpine3.17 as builder
+FROM golang:1.20.4-alpine3.18 as builder
 RUN mkdir -p /app
 WORKDIR /app
 
@@ -18,13 +18,12 @@ FROM node as nodejs
 RUN mkdir /app
 COPY ./ui/ /app/ui
 WORKDIR /app/ui
-RUN npm install && npm run build --production
+RUN npm install react-scripts && npm run build --production
 
-FROM alpine:3.17.3
+FROM alpine:3.18.0
 RUN mkdir /go
 COPY --from=builder /app/lol /go/boostchickenlol
-COPY --from=nodejs /app /go/ui/
-COPY ui /go
+COPY --from=nodejs /app/ui/ /go/ui/
 WORKDIR /go
 
 LABEL org.opencontainers.image.maintainer="John Dorman <john@boostchicken.dev>"     

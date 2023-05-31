@@ -119,5 +119,4 @@ func Invoke(c *gin.Context) {
 		return
 	}
 	t.LOL(command, c)
-	l.Set(l.Len, command)
 }

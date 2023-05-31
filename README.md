@@ -1,12 +1,19 @@
- # boostchickenlol
-A clone of Metas bunnylol service written in go, configuration is via a YAML file, check the example in the repo.
+ # boostchicken - lol
+A clone of Meta's bunnylol service written in go, configuration is via a YAML file, check the example in the repo.
 
 ### Usage
 1. Deploy the docker container and expose the port you configured 
 1. Create a custom search engine in your browser of choice 
 ```
-Default: https://127.0.0.1:6969/?q=%s
-Traefik Proxy: https://lol.boostchicken.dev/?q=%s
+Default: https://127.0.0.1:8080/lol?q=%s
+Reverse Proxy: https://lol.boostchicken.dev/lol?q=%s
+```
+
+### UI
+There is a barebones UI that lists all commmands
+```
+Default: https://127.0.0.1:8080/
+Reverse Proxy: https://lol.boostchicken.dev/
 ```
 
 ### Config Types
@@ -36,6 +43,7 @@ ghuser boostchicken -> https://www.github.com/boostchicken
 ``` 
 
 ghr boostchicken lol -> https://www.github.com/boostchicken/lol
+
 ### Config
 *GET* /rehash 
 
