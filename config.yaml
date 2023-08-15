@@ -1,8 +1,8 @@
-bind: 0.0.0.0:6969
+bind: :6969
 entries:
     - command: g
       type: Redirect
       value: https://www.google.com/search?q=%s
-    - command: test
+    - command: 'tests '
       type: Alias
-      value: test.com
+      value: https://cnn.com

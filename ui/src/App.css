@@ -21,6 +21,28 @@
   font-size: calc(3px + 2vmin);
   color: white;
 }
+
+.Toast {
+  float: right;
+  z-index: auto;
+}
+
+.logo {
+  height: auto;
+  animation: fadeIn 3s;
+  width: 750px;
+  pointer-events: none;
+}
+
+@media only screen and (max-width: 750px) {
+  .logo {
+    height: auto;
+    animation: fadeIn 3s;
+    width: 100%;
+    pointer-events: none;
+  }
+}
+
 a, a:hover, a:visited, a:active {
   padding: 5px;
   color: inherit;
