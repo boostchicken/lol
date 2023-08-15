@@ -2,6 +2,10 @@
 
 Works with boostchickenlol to Autocomplete and search current commands
 
+## Configuration 
+
+In Omnibox:  ```bl setUrl https://<your host>/liveconfig`````` in browser to set your own host.
+
 ## Development 
 
 This extension was created with [Extension CLI](https://oss.mobilefirst.me/extension-cli/)!

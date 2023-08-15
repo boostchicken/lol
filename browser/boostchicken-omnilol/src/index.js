@@ -1,8 +1,10 @@
-let conf = {}
+let conf = {
+}
 
+let url = "https://lol.boostchicken.dev/liveconfig"
 async function cache() {
     try {
-        fetch("https://lol.boostchicken.dev/liveconfig")
+        fetch(url)
         .then((response) => response.json())
         .then((data) => conf = data)
     } catch (e) {
@@ -28,6 +30,11 @@ chrome.omnibox.onInputChanged.addListener((text, suggest) => {
     const results = []
     const action = text.trim();
     const args = action.split(' ');
+    if(args[0] == "setUrl") {
+        url = args[1];
+        results.push({content: "setUrl", description: `setUrl ${url} for liveconfig (e.g setUrl https://lol.boostchicken.dev/liveconfig)`})
+        suggest(results)
+    }
     for (const elm of conf.Entries) {
         if(elm.Command.includes(args[0])) {
             results.push({
@@ -49,10 +56,14 @@ chrome.omnibox.onInputEntered.addListener((term, OnInputEnteredDisposition) => {
             tab_disposition = "NEW_TAB";
             break;
     }
-    chrome.search.query({
-        disposition: tab_disposition, 
-        text: term
-    });
+    if(term.split(" ")[0] == "setUrl") {
+        url = term.split(" ")[1]
+    } else {
+        chrome.search.query({
+            disposition: tab_disposition, 
+            text: term
+        });
+    }
 });
 
 cache()
