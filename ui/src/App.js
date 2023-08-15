@@ -6,12 +6,11 @@ import { Toast,Button, FloatingLabel, Form, Table } from 'react-bootstrap'
  function App() {
 
   const [showToast, setShowToast]= useState(false)
-  const toggleToast = () => setShowToast(!showToast)
   const [toastText, setToastText] = useState("")
   const [history, setHistory] = useState([])
   const [entries, setEntries] = useState({Entries:[]})
   const [newCommand, setNewCommand] = useState("")
-  const [newType, setNewType] = useState("")
+  const [newType, setNewType] = useState("Alias")
   const [newValue, setNewValue] = useState("")
 
   const fetchData = async () => {
@@ -56,9 +55,17 @@ import { Toast,Button, FloatingLabel, Form, Table } from 'react-bootstrap'
   }
   return (
     <div className="App">
+      <div className="Toast">
+        <Toast bg="success" show={showToast} onClose={() => setShowToast(false)} delay={3000} autohide>
+        <Toast.Header>
+          <strong className="me-auto">Boostchicken LOL</strong>
+        </Toast.Header>
+        <Toast.Body>{toastText}</Toast.Body>
+        </Toast>
+      </div>
       <header>
         <picture>
-          <img className="logo" width={750} height={750} src={logoSvg} alt="What is a boostchicken?"/>
+          <img className="logo" src={logoSvg} alt="What is a boostchicken?"/>
         </picture>
         </header>
       <main className="commands">
@@ -73,9 +80,9 @@ import { Toast,Button, FloatingLabel, Form, Table } from 'react-bootstrap'
       </thead>
       <tbody>
         {entries.Entries.map(data => (
-              <tr>
-                <td>{data.Command}</td>
-                <td>{data.Type}</td>
+              <tr key={data.Command}>
+                <td style={{width: '15%'}} >{data.Command}</td>
+                <td style={{width: '15%'}} >{data.Type}</td>
                 <td>{data.Value}</td>
                 <td><Button as="button" type="button" onClick={() => deleteCommand(data.Command)}>Delete</Button></td>
               </tr>
@@ -84,15 +91,14 @@ import { Toast,Button, FloatingLabel, Form, Table } from 'react-bootstrap'
 
             <td>
               <FloatingLabel controlId="floatingCommand" label="Command">
-                <Form.Control type="text" onChange={(e) => setNewCommand(e.currentTarget.value)} placeholder="Command" />
+                <Form.Control className="input-sm"  type="text" onChange={(e) => setNewCommand(e.currentTarget.value)} placeholder="Command" />
               </FloatingLabel>
           </td>
           <td>
-              <Form.Select aria-label="Command Mode" onChange={(e) => setNewType(e.currentTarget.value)}>
-              <option>Select one</option>
-              <option value="Redirect">Redirect</option>
-              <option value="RedirectVarArgs">RedirectVarArgs</option>
+              <Form.Select aria-label="Mode" onChange={(e) => setNewType(e.currentTarget.value)}>
               <option value="Alias">Alias</option>
+              <option value="Redirect">Redirect</option>
+              <option value="RedirectVarArgs">VarArgs</option>
             </Form.Select>
           </td>
             <td>
@@ -118,7 +124,7 @@ import { Toast,Button, FloatingLabel, Form, Table } from 'react-bootstrap'
       </thead>
       <tbody>
         {history.map(data => (
-              <tr>
+              <tr key={data.Result}>
                 <td>{data.Command}</td>
                 <td>{data.Result}</td>
                 <td>{data.IpAddress}</td>
@@ -126,12 +132,7 @@ import { Toast,Button, FloatingLabel, Form, Table } from 'react-bootstrap'
             ))}
             </tbody></Table>
       </main>
-      <Toast show={showToast}  onClose={toggleToast}>
-      <Toast.Header>
-        <strong className="me-auto">Boostchicken LOLww</strong>
-      </Toast.Header>
-      <Toast.Body>{toastText}</Toast.Body>
-    </Toast>
+     
 
     </div>
 
