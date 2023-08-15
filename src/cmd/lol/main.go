@@ -1,19 +1,16 @@
 package main // import "github.com/boostchicken/cmd/lol"
 
 import (
-	"io/fs"
 	"log"
 	"net/http"
 	"os"
 
-	"github.com/bluele/gcache"
 	"github.com/boostchicken/internal/config"
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/exp/maps"
 	"gopkg.in/yaml.v3"
 )
-
-var l = gcache.New(250).ARC().Build()
 
 // Debug: /app/lol debug will run in debug mode
 // Release: /app/lol will run in release mode
@@ -31,12 +28,7 @@ func main() {
 				},
 			},
 		}
-		bytes, err2 := yaml.Marshal(newConf)
-		if err2 != nil {
-			log.Fatal("unable to write default config")
-		}
-		_ = os.WriteFile("config.yaml", bytes, fs.ModePerm)
-		configFile = bytes
+		configFile = newConf.WriteConfig()
 	}
 
 	err3 := yaml.Unmarshal(configFile, &config.CurrentConfig)
@@ -56,8 +48,8 @@ func main() {
 	r := gin.Default()
 	r.Use(static.Serve("/", static.LocalFile("./ui/build/", true)))
 
-	r.GET("/rehash", InvokeRehash).GET("/config", RenderConfigYAML).GET("/liveconfig", RenderConfigJSON).GET("/lol", Invoke).PUT("/config", updateConfig)
-
+	r.GET("/rehash", InvokeRehash).GET("/config", RenderConfigYAML).GET("/liveconfig", RenderConfigJSON).GET("/lol", Invoke).PUT("/add/:command/:type", AddCommand).DELETE("/delete/:command", DeleteCommand)
+	r.GET("/history", RenderHistory)
 	log.Println("Listening on", config.CurrentConfig.Bind)
 
 	err4 := r.Run(config.CurrentConfig.Bind)
@@ -65,33 +57,53 @@ func main() {
 	}
 }
 
-// HTTP: GET /config
-// Renders current config as YAML
+// DeleteCommand HTTP: GET /config
+// Delete a current entry
+// c gin.Context
+func DeleteCommand(c *gin.Context) {
+	for i, entry := range config.CurrentConfig.Entries {
+		if entry.Command == c.Param("command") {
+			go config.CurrentConfig.CacheConfig()
+			config.CurrentConfig.Entries = append(config.CurrentConfig.Entries[:i], config.CurrentConfig.Entries[i+1:]...)
+			c.YAML(200, gin.H{
+				"message": "Deleted",
+			})
+			return
+		}
+	}
+}
+
+// RenderConfigYAML HTTP: GET /config
+// Renders current config as JSON
 // c gin.Context
 func RenderConfigYAML(c *gin.Context) {
 	c.YAML(200, config.CurrentConfig)
 }
 
-// HTTP: GET /liveconfig
-// Renders current config as YAML
+// RenderConfigJSON HTTP: GET /liveconfig
+// Renders current config as JSON
 // c gin.Context
 func RenderConfigJSON(c *gin.Context) {
 	c.JSON(200, config.CurrentConfig)
 }
 
-// HTTP: PUT /config
+// RenderHistory HTTP: GET /history
+// Renders current config as JSON
 // c gin.Context
-// Content-Type: application/json
-// Content-Type: application/yaml
-// Content-Type: application/toml
-// Renders current config as a format of your choice,
-func updateConfig(c *gin.Context) {
-	c.BindHeader(config.CurrentConfig)
-	config.CurrentConfig.RehashConfig()
-	c.YAML(200, gin.H{"message": "Updated"})
+func RenderHistory(c *gin.Context) {
+	c.JSON(200, maps.Values(config.HistoryCache.GetALL(false)))
 }
 
-// HTTP: GET /rehash
+// AddCommand HTTP: POST /config
+// c gin.Context
+// Addes a new command and saves
+func AddCommand(c *gin.Context) {
+	config.CurrentConfig.Entries = append(config.CurrentConfig.Entries, config.LOLEntry{Command: c.Param("command"), Type: c.Param("type"), Value: c.Query("url")})
+	config.CurrentConfig.WriteConfig()
+	config.CurrentConfig.CacheConfig()
+}
+
+// InvokeRehash HTTP: GET /rehash
 // Renders current config as YAML
 func InvokeRehash(c *gin.Context) {
 	config.CurrentConfig.RehashConfig()
@@ -102,7 +114,7 @@ func InvokeRehash(c *gin.Context) {
 
 var t config.LOLAction = config.LOLAction{}
 
-// HTTP: GET /?q=githuq boostchicken lol
+// Invoke HTTP: GET /lol?q=github boostchicken lol
 // c gin.Context
 // Query: q the actual command to run, space delimited
 func Invoke(c *gin.Context) {

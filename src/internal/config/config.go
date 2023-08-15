@@ -2,22 +2,38 @@ package config //import "github.com/boostchicken/lol/config"
 
 import (
 	"fmt"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
 	"reflect"
 	"strings"
+	"sync"
 
+	"github.com/bluele/gcache"
 	"github.com/gin-gonic/gin"
 	"gopkg.in/yaml.v3"
 )
+
+var ops uint64
+var wg sync.WaitGroup
+
+// HistoryCache LRU cache for command history
+var HistoryCache = gcache.New(250).LRU().Build()
+
+// History entry struct
+type History struct {
+	Command   string
+	Result    string
+	ipAddress string
+}
 
 // LOLAction is the main action struct
 // Mainly needed for reflection
 type LOLAction struct {
 }
 
-// Configuration entry
+// LOLEntry Configuration entry
 type LOLEntry struct {
 	Command string // the first arguement of q delimited by spaces
 	Type    string // Any of the three types. RedirectVarArgs, Alias, Redirect
@@ -30,11 +46,13 @@ type Config struct {
 	Entries []LOLEntry // List of entries
 }
 
-var CurrentConfig Config                      // the current config
-var Cache map[string]LOLEntry                 // A Map that caches LOLEntry BY Command
-var ReflectionCache map[string]reflect.Method // Caches the Method associated with the Type
+// CurrentConfig the current config loaded
+var CurrentConfig Config
 
-// Reload the config but do not rebind
+var cache map[string]LOLEntry                 // A Map that caches LOLEntry BY Command
+var reflectionCache map[string]reflect.Method // Caches the Method associated with the Type
+
+// RehashConfig Reload the config but do not rebind
 func (c *Config) RehashConfig() {
 	configFile, err := os.ReadFile("config.yaml")
 	if err != nil {
@@ -47,68 +65,90 @@ func (c *Config) RehashConfig() {
 	c.CacheConfig()
 }
 
-// Generate ReflectionCache and Command Cache
+// WriteConfig write config to config.yaml
+func (c *Config) WriteConfig() []byte {
+	bytes, err2 := yaml.Marshal(&CurrentConfig)
+	if err2 != nil {
+		log.Fatal("unable to write default config")
+	}
+	_ = os.WriteFile("config.yaml", bytes, fs.ModePerm)
+	return bytes
+}
+
+// CacheConfig Generate ReflectionCache and Command Cache
 func (c *Config) CacheConfig() {
-	Cache = make(map[string]LOLEntry)
-	ReflectionCache = make(map[string]reflect.Method)
+	cache = make(map[string]LOLEntry)
+	reflectionCache = make(map[string]reflect.Method)
 
 	for _, e := range c.Entries {
-		Cache[e.Command] = e
-		_, okm := ReflectionCache[e.Type]
+		cache[e.Command] = e
+		_, okm := reflectionCache[e.Type]
 		if !okm {
 
 			method, okr := reflect.TypeOf(&LOLAction{}).MethodByName(e.Type)
 			if !okr {
 				log.Fatalf("Unable to find function %s", e.Type)
 			}
-			ReflectionCache[e.Type] = method
+			reflectionCache[e.Type] = method
 		}
 	}
 }
 
-// Simple printf http:://google.com/search?q=%s
+// Redirect  Simple printf http:://google.com/search?q=%s
 // c gin context
 // url the url as a string
 // parts command split by spaces
 func (t *LOLAction) Redirect(c *gin.Context, url string, parts []string) {
-	redir := fmt.Sprintf(url, strings.Join(parts[1:], " "))
-	c.Redirect(http.StatusFound, redir)
+	res := fmt.Sprintf(url, strings.Join(parts[1:], " "))
+	c.Redirect(http.StatusFound, res)
+	t.AddCommandHistory(res, c)
 }
 
-// A static redirect
+// AddCommandHistory add command execution to history cache
+func (t *LOLAction) AddCommandHistory(result string, c *gin.Context) {
+	wg.Add(1)
+	ops++
+	HistoryCache.Set(ops, History{Command: c.Query("q"), Result: result, ipAddress: c.ClientIP()})
+	wg.Done()
+}
+
+// Alias A static redirect
 // c gin context
 // url the url as a string
-// _ a pointless variable i let making reflectiosn easier
+// _ a pointless variable i let making reflections easier
 func (t *LOLAction) Alias(c *gin.Context, url string, _ []string) {
-	c.Redirect(http.StatusMovedPermanently, url)
+	res := url
+	c.Redirect(http.StatusMovedPermanently, res)
+	t.AddCommandHistory(res, c)
 }
 
-// A VarArgs redirect http:://github.com/%s/%s
+// RedirectVarArgs A VarArgs redirect http:://github.com/%s/%s
 // c gin context
 // url the url as a string
 // a varargs for printf
 func (t *LOLAction) RedirectVarArgs(c *gin.Context, url string, a ...any) {
-	redir := fmt.Sprintf(url, a...)
-	c.Redirect(http.StatusFound, redir)
+	res := fmt.Sprintf(url, a...)
+	c.Redirect(http.StatusFound, res)
+	t.AddCommandHistory(res, c)
 }
 
-// Find the command and then execute the function associated with the Type
+// LOL Find the command and then execute the function associated with the Type
 // command the command to execute
 // c gin context
 func (t *LOLAction) LOL(command string, c *gin.Context) {
 	explode := strings.Split(command, " ")
-	entry, ok := Cache[explode[0]]
+	entry, ok := cache[explode[0]]
 	if !ok {
-		if google, search := Cache["g"]; search {
+		if google, search := cache["g"]; search {
 			redir := fmt.Sprintf(google.Value, strings.Join(explode, " "))
 			c.Redirect(http.StatusFound, redir)
-		} else {
-			c.AbortWithError(http.StatusNotFound, fmt.Errorf("no endpoint found"))
+			t.AddCommandHistory(redir, c)
 			return
 		}
+		c.AbortWithError(http.StatusNotFound, fmt.Errorf("no endpoint found"))
 	}
 
-	m, mok := ReflectionCache[entry.Type]
+	m, mok := reflectionCache[entry.Type]
 	if !mok {
 		c.AbortWithError(http.StatusNotFound, fmt.Errorf("no endpoint found"))
 		return
