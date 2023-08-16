@@ -126,7 +126,8 @@ entries:
 ### Github Repo
 [ghcr.io/boostchicken/lol:latest](https://github.com/boostchicken/lol/pkgs/container/lol)
 
-
+### Development 
+Use the provided devcontainer locally or in codespaces, there is a Makefile to build binaries, also the UI has a proxy config standard in Node
 ### Config Mounting example
 * No longer needed unless you want to change the port, just boot the image and use the UI
 
