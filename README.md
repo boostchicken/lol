@@ -10,15 +10,22 @@ Reverse Proxy: https://lol.boostchicken.dev/lol?q=%s
 ```
 
 ### UI
-There is a UI capable of managing the config.yaml (Additions and Deletions) as well as a recent History of queries
+The UI is capable of managing config.yaml with no rehash or restarts  You can add and delete commnds on the fly
 ```
 Default: https://127.0.0.1:8080/
 Reverse Proxy: https://lol.boostchicken.dev/
 ```
+![image](https://github.com/boostchicken/lol/assets/427295/950d2659-78be-463f-8a81-192baa65c2a6)
 
 ### Chrome Extension
-As your configs grow its hard to remember everything this omnibox extension queries your live config and shows you the command and its url to sprintf to
- <img width="315" alt="image" src="https://github.com/boostchicken/lol/assets/427295/aae501ab-40ba-41c5-badd-a4b215b6db11">
+
+<img width="315" alt="image" src="https://github.com/boostchicken/lol/assets/427295/4b5a23bf-d623-4cc1-8514-e01e687e25aa">
+
+* Search your curent liveconfig for commands.
+
+* In omnibox just type "bl " and the search term and the results / suggestions flow like above.
+### Host config command
+```bl setUrl http://<yourshost>/liveconfig```
 
 ### Config Types
 * Alias - A straight redirect to a URL, no arguments used. (e.g.)
@@ -110,5 +117,6 @@ entries:
 
 
 ### Config Mounting example
+* No longer needed unless you want to change the port, just boot the image and use the UI
 
 ```-v /tmp/config.yaml:/go/config.yaml```
