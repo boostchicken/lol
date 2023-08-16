@@ -1,6 +1,16 @@
  # boostchicken - lol
-A clone of Meta's bunnylol service written in go, configuration is via a YAML file, check the example in the repo.
+A clone of Meta's bunnylol service written in go, configuration is via a YAML file
 
+## Features
+1. A UI and accompnaying REST endpoints to add or delete commands on the fly
+2. Chrome Extension for querying your commands
+3. History (last 250 queries and their result)
+
+## Roadmap
+1. Passkey Auth
+2. SaaS Platform, no need for user to run self-hosted.
+3. Swagger API / Spec for client generation
+   
 ### Usage
 1. Deploy the docker container and expose the port you configured 
 1. Create a custom search engine in your browser of choice 
