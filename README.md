@@ -94,7 +94,6 @@ entries:
     type: Redirect
     value: https://www.google.com/search?q=%s
  ```
-<img width="441" align="right" alt="Some people are curious what a boostchicken is.  Now you know." src="https://user-images.githubusercontent.com/427295/222669555-3b222ab6-ff78-4ce4-8735-d7cd5c104c09.png">
 
 ## Docker Build
 [![Publish Docker image](https://github.com/boostchicken/lol/actions/workflows/docker-image.yml/badge.svg)](https://github.com/boostchicken/lol/actions/workflows/docker-image.yml)
