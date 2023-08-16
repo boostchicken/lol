@@ -10,11 +10,15 @@ Reverse Proxy: https://lol.boostchicken.dev/lol?q=%s
 ```
 
 ### UI
-There is a barebones UI that lists all commmands
+There is a UI capable of managing the config.yaml (Additions and Deletions) as well as a recent History of queries
 ```
 Default: https://127.0.0.1:8080/
 Reverse Proxy: https://lol.boostchicken.dev/
 ```
+
+### Chrome Extension
+As your configs grow its hard to remember everything this omnibox extension queries your live config and shows you the command and its url to sprintf to
+ <img width="315" alt="image" src="https://github.com/boostchicken/lol/assets/427295/aae501ab-40ba-41c5-badd-a4b215b6db11">
 
 ### Config Types
 * Alias - A straight redirect to a URL, no arguments used. (e.g.)
