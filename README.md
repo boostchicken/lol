@@ -15,6 +15,7 @@ The UI is capable of managing config.yaml with no rehash or restarts  You can ad
 Default: https://127.0.0.1:8080/
 Reverse Proxy: https://lol.boostchicken.dev/
 ```
+
 ![image](https://github.com/boostchicken/lol/assets/427295/950d2659-78be-463f-8a81-192baa65c2a6)
 
 ### Chrome Extension
