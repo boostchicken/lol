@@ -128,6 +128,9 @@ entries:
 
 ### Development 
 Use the provided devcontainer locally or in codespaces, there is a Makefile to build binaries, also the UI has a proxy config standard in Node
+
+If you want to contribute but lack hardware for dev, I will add you to the repo and cover your codespaces cost.  Open an Issue if neeeded.
+
 ### Config Mounting example
 * No longer needed unless you want to change the port, just boot the image and use the UI
 
