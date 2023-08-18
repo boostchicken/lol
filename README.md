@@ -28,7 +28,7 @@ Reverse Proxy: https://lol.boostchicken.dev/
 
 ![image](https://github.com/boostchicken/lol/assets/427295/950d2659-78be-463f-8a81-192baa65c2a6)
 
-### Chrome Extension
+## Chrome Extension
 
 <img width="315" alt="image" src="https://github.com/boostchicken/lol/assets/427295/4b5a23bf-d623-4cc1-8514-e01e687e25aa">
 
