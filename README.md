@@ -72,7 +72,7 @@ ghr boostchicken lol -> https://www.github.com/boostchicken/lol
 ```Reloads the configuration.  For use after editing config via filesystem```
 
 
-*PUT* /config 
+*PUT* /config *Deprecated*
 
 ```Replaces the configuration file in memory, does not write it to disk.  Rehashes server after update.  This will not cause the server to rebind```
 
