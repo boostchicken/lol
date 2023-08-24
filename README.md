@@ -1,6 +1,16 @@
  # boostchicken - lol
-A clone of Meta's bunnylol service written in go, configuration is via a YAML file, check the example in the repo.
+A clone of Meta's bunnylol service written in go, configuration is via a YAML file
 
+## Features
+1. A UI and accompnaying REST endpoints to add or delete commands on the fly
+2. Chrome Extension for querying your commands
+3. History (last 250 queries and their result)
+
+## Roadmap
+1. Passkey Auth
+2. SaaS Platform, no need for user to run self-hosted.
+3. Swagger API / Spec for client generation
+   
 ### Usage
 1. Deploy the docker container and expose the port you configured 
 1. Create a custom search engine in your browser of choice 
@@ -10,11 +20,23 @@ Reverse Proxy: https://lol.boostchicken.dev/lol?q=%s
 ```
 
 ### UI
-There is a barebones UI that lists all commmands
+The UI is capable of managing config.yaml with no rehash or restarts  You can add and delete commnds on the fly
 ```
 Default: https://127.0.0.1:8080/
 Reverse Proxy: https://lol.boostchicken.dev/
 ```
+
+![image](https://github.com/boostchicken/lol/assets/427295/950d2659-78be-463f-8a81-192baa65c2a6)
+
+## Chrome Extension
+
+<img width="315" alt="image" src="https://github.com/boostchicken/lol/assets/427295/4b5a23bf-d623-4cc1-8514-e01e687e25aa">
+
+* Search your curent liveconfig for commands.
+
+* In omnibox just type "bl " and the search term and the results / suggestions flow like above.
+### Host config command
+```bl setUrl http://<yourshost>/liveconfig```
 
 ### Config Types
 * Alias - A straight redirect to a URL, no arguments used. (e.g.)
@@ -50,7 +72,7 @@ ghr boostchicken lol -> https://www.github.com/boostchicken/lol
 ```Reloads the configuration.  For use after editing config via filesystem```
 
 
-*PUT* /config 
+*PUT* /config *Deprecated*
 
 ```Replaces the configuration file in memory, does not write it to disk.  Rehashes server after update.  This will not cause the server to rebind```
 
@@ -94,7 +116,6 @@ entries:
     type: Redirect
     value: https://www.google.com/search?q=%s
  ```
-<img width="441" align="right" alt="Some people are curious what a boostchicken is.  Now you know." src="https://user-images.githubusercontent.com/427295/222669555-3b222ab6-ff78-4ce4-8735-d7cd5c104c09.png">
 
 ## Docker Build
 [![Publish Docker image](https://github.com/boostchicken/lol/actions/workflows/docker-image.yml/badge.svg)](https://github.com/boostchicken/lol/actions/workflows/docker-image.yml)
@@ -105,7 +126,12 @@ entries:
 ### Github Repo
 [ghcr.io/boostchicken/lol:latest](https://github.com/boostchicken/lol/pkgs/container/lol)
 
+### Development 
+Use the provided devcontainer locally or in codespaces, there is a Makefile to build binaries, also the UI has a proxy config standard in Node
+
+If you want to contribute but lack hardware for dev, I will add you to the repo and cover your codespaces cost.  Open an Issue if neeeded.
 
 ### Config Mounting example
+* No longer needed unless you want to change the port, just boot the image and use the UI
 
 ```-v /tmp/config.yaml:/go/config.yaml```
