@@ -1,11 +1,14 @@
 package main // import "github.com/boostchicken/cmd/lol"
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/boostchicken/internal/config"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/exp/maps"
@@ -46,14 +49,17 @@ func main() {
 	}
 
 	r := gin.Default()
+	r.Use(cors.Default())
 	r.Use(static.Serve("/", static.LocalFile("./ui/build/", true)))
 
-	r.GET("/rehash", InvokeRehash).GET("/config", RenderConfigYAML).GET("/liveconfig", RenderConfigJSON).GET("/lol", Invoke).PUT("/add/:command/:type", AddCommand).DELETE("/delete/:command", DeleteCommand)
+	r.GET("/rehash", InvokeRehash).GET("/config", RenderConfig).GET("/liveconfig", RenderConfigJSON).GET("/lol", Invoke).PUT("/add/:command/:type", AddCommand).DELETE("/delete/:command", DeleteCommand)
 	r.GET("/history", RenderHistory)
+
 	log.Println("Listening on", config.CurrentConfig.Bind)
 
 	err4 := r.Run(config.CurrentConfig.Bind)
 	if err4 != nil && err4 != http.ErrServerClosed {
+		os.Exit(1)
 	}
 }
 
@@ -63,21 +69,21 @@ func main() {
 func DeleteCommand(c *gin.Context) {
 	for i, entry := range config.CurrentConfig.Entries {
 		if entry.Command == c.Param("command") {
-			go config.CurrentConfig.CacheConfig()
+
 			config.CurrentConfig.Entries = append(config.CurrentConfig.Entries[:i], config.CurrentConfig.Entries[i+1:]...)
-			c.YAML(200, gin.H{
-				"message": "Deleted",
-			})
+
+			config.CurrentConfig.CacheConfig()
+			c.JSON(200, config.CurrentConfig)
 			return
 		}
 	}
 }
 
-// RenderConfigYAML HTTP: GET /config
-// Renders current config as JSON
+// RenderConfig HTTP: GET /config
+// Renders current config based on Accept
 // c gin.Context
-func RenderConfigYAML(c *gin.Context) {
-	c.YAML(200, config.CurrentConfig)
+func RenderConfig(c *gin.Context) {
+	_ = c.BindHeader(config.CurrentConfig)
 }
 
 // RenderConfigJSON HTTP: GET /liveconfig
@@ -94,13 +100,28 @@ func RenderHistory(c *gin.Context) {
 	c.JSON(200, maps.Values(config.HistoryCache.GetALL(false)))
 }
 
-// AddCommand HTTP: POST /config
+// AddCommand HTTP: PUT /add/:command/:type?url=github.com
 // c gin.Context
-// Addes a new command and saves
+// Adds a new command and saves
 func AddCommand(c *gin.Context) {
-	config.CurrentConfig.Entries = append(config.CurrentConfig.Entries, config.LOLEntry{Command: c.Param("command"), Type: c.Param("type"), Value: c.Query("url")})
+	typevar := c.Param("type")
+	switch typevar {
+	case "Redirect":
+		break
+	case "RedirectVarArgs":
+		break
+	case "Alias":
+		break
+	default:
+		_ = c.AbortWithError(501, errors.New("Invalid type"))
+	}
+	config.CurrentConfig.Entries = append(config.CurrentConfig.Entries, config.LOLEntry{
+		Command: strings.ToLower(strings.TrimSpace(c.Param("command"))),
+		Type:    typevar,
+		Value:   c.Query("url")})
 	config.CurrentConfig.WriteConfig()
 	config.CurrentConfig.CacheConfig()
+	c.JSON(200, config.CurrentConfig)
 }
 
 // InvokeRehash HTTP: GET /rehash
