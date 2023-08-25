@@ -1,138 +1,51 @@
-import './App.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import logoSvg from './img/boostchicken.svg';
+import { ReactComponent as Logo } from './boostchicken.svg';
+import boostchicken from './boostchicken.png';
 import { useEffect, useState } from 'react';
-import { Toast,Button, FloatingLabel, Form, Table } from 'react-bootstrap'
- function App() {
+import Image from 'react-bootstrap/Image'
+import History from './components/History';
+import Commands from './components/Commands';
+import ToastContainer from 'react-bootstrap/ToastContainer';
+import Toast from 'react-bootstrap/Toast';
+import Container from 'react-bootstrap/Container';
 
-  const [showToast, setShowToast]= useState(false)
+function App() {
+
+  const [showToast, setShowToast] = useState(false)
   const [toastText, setToastText] = useState("")
-  const [history, setHistory] = useState([])
-  const [entries, setEntries] = useState({Entries:[]})
-  const [newCommand, setNewCommand] = useState("")
-  const [newType, setNewType] = useState("Alias")
-  const [newValue, setNewValue] = useState("")
-
-  const fetchData = async () => {
-    try {
-      const response = await fetch("/liveconfig");
-      const json = await response.json();
-      setEntries(json)
-
-      const response2 = await fetch("/history");
-      const json2 = await response2.json();
-      setHistory(json2)
-    } catch (error) {
-      setToastText("Failed to query config")
-    }
-  };
-
+  const [showRs, setShowRs] = useState(false)
   useEffect(() => {
-    fetchData();
-  }, []); 
-
-  const deleteCommand = async (command) => {
-    fetch("/delete/" + command, {method: 'DELETE'})
-    .then(() => {
-      setToastText("Deleted " + command)
+    if (Math.random() < 0.1) {
+      setShowRs(true)
+    }
+  }, [])
+  useEffect(() => {
+    if (toastText !== "") {
       setShowToast(true)
-    })
-    .catch(setToastText("Failed to delete " + command))
-    .finally(fetchData)
-  }
-
-  const addCommand = async () => {
-
-    fetch("/add/"+newCommand+"/"+newType+"?url="+encodeURIComponent(newValue), {"method": "PUT"}).then(() => {
-      fetchData()
-      setToastText("Added " + newCommand)
-    }).catch(() => {
-      setToastText("Failed to add " + newCommand)
-     
-    }).finally(() => {
-      setShowToast(true)
-    })
-  }
+    }
+  }, [toastText])
   return (
     <div className="App">
-      <div className="Toast">
-        <Toast bg="success" show={showToast} onClose={() => setShowToast(false)} delay={3000} autohide>
-        <Toast.Header>
-          <strong className="me-auto">Boostchicken LOL</strong>
-        </Toast.Header>
-        <Toast.Body>{toastText}</Toast.Body>
+      <ToastContainer position="top-end">
+        <Toast bg="primary" show={showToast} onClose={() => setShowToast(false)} delay={3000} autohide>
+          <Toast.Header>
+            <strong className="me-auto">Admin Notification</strong>
+          </Toast.Header>
+          <Toast.Body>{toastText}</Toast.Body>
         </Toast>
-      </div>
-      <header>
-        <picture>
-          <img className="logo" src={logoSvg} alt="What is a boostchicken?"/>
-        </picture>
-        </header>
-      <main className="commands">
-        <Table className="commands" size="sm" striped hover bordered variant="dark">
-      <thead>
-        <tr>
-          <th>Command</th>
-          <th>Type</th>
-          <th>Value</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {entries.Entries.map(data => (
-              <tr key={data.Command}>
-                <td style={{width: '15%'}} >{data.Command}</td>
-                <td style={{width: '15%'}} >{data.Type}</td>
-                <td>{data.Value}</td>
-                <td><Button as="button" type="button" onClick={() => deleteCommand(data.Command)}>Delete</Button></td>
-              </tr>
-            ))}
-            <tr>
+      </ToastContainer>
+      <Container>
+        {
 
-            <td>
-              <FloatingLabel controlId="floatingCommand" label="Command">
-                <Form.Control className="input-sm"  type="text" onChange={(e) => setNewCommand(e.currentTarget.value)} placeholder="Command" />
-              </FloatingLabel>
-          </td>
-          <td>
-              <Form.Select aria-label="Mode" onChange={(e) => setNewType(e.currentTarget.value)}>
-              <option value="Alias">Alias</option>
-              <option value="Redirect">Redirect</option>
-              <option value="RedirectVarArgs">VarArgs</option>
-            </Form.Select>
-          </td>
-            <td>
-            <FloatingLabel controlId="floatingValue" label="URL Template">
-              <Form.Control type="text" onChange={(e) => setNewValue(e.currentTarget.value)} placeholder="https://www.google.com/?q=%s" />
-            </FloatingLabel>
-          </td>
-          <td>
-            <Button  as="button" type="button" onClick={() => addCommand()}>Add</Button>
-          </td>
-            
-          </tr>
-    
-      </tbody>
-    </Table>
-    <Table className="commands" size="sm" striped hover bordered variant="dark">
-      <thead>
-        <tr>
-          <th>Command</th>
-          <th>Result</th>
-          <th>IP</th>
-        </tr>
-      </thead>
-      <tbody>
-        {history.map(data => (
-              <tr key={data.Result}>
-                <td>{data.Command}</td>
-                <td>{data.Result}</td>
-                <td>{data.IpAddress}</td>
-              </tr>
-            ))}
-            </tbody></Table>
-      </main>
-     
+        }
+        {!showRs ? (
+          <Logo className="logo" title="This is a boostchicken!" />
+        ) : (
+          <Image className="logo" title="A boostchicken in Ascari Blue!" src={boostchicken} fluid />
+        )}
+      </Container>
+      <Commands setToastText={setToastText} />
+
+      <History />
 
     </div>
 

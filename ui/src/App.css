@@ -1,46 +1,26 @@
 .App {
   text-align: center;
-}
-.logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-.commands  {
-  width: 750px;
-  font-size: 14px;
-  font-weight: normal;
-}
-.App {
   background-color: #282c34;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(3px + 2vmin);
+  justify-content: center;;
   color: white;
+}
+
+@media only screen and (max-width: 750px) {
+  .logo {
+    pointer-events: none;
+    animation: fadeIn 3s;
+    height: auto;
+    width: 100%;
+  }
 }
 
 .Toast {
   float: right;
   z-index: auto;
-}
-
-.logo {
-  height: auto;
-  animation: fadeIn 3s;
-  width: 750px;
-  pointer-events: none;
-}
-
-@media only screen and (max-width: 750px) {
-  .logo {
-    height: auto;
-    animation: fadeIn 3s;
-    width: 100%;
-    pointer-events: none;
-  }
 }
 
 a, a:hover, a:visited, a:active {

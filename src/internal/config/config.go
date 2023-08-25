@@ -23,9 +23,8 @@ var HistoryCache = gcache.New(250).LRU().Build()
 
 // History entry struct
 type History struct {
-	Command   string
-	Result    string
-	ipAddress string
+	Command string
+	Result  string
 }
 
 // LOLAction is the main action struct
@@ -66,7 +65,7 @@ func (c *Config) RehashConfig() {
 }
 
 // WriteConfig write config to config.yaml
-func (c *Config) WriteConfig() []byte {
+func (c Config) WriteConfig() []byte {
 	bytes, err2 := yaml.Marshal(&CurrentConfig)
 	if err2 != nil {
 		log.Fatal("unable to write default config")
@@ -108,7 +107,7 @@ func (t *LOLAction) Redirect(c *gin.Context, url string, parts []string) {
 func (t *LOLAction) AddCommandHistory(result string, c *gin.Context) {
 	wg.Add(1)
 	ops++
-	HistoryCache.Set(ops, History{Command: c.Query("q"), Result: result, ipAddress: c.ClientIP()})
+	_ = HistoryCache.Set(ops, History{Command: c.Query("q"), Result: result})
 	wg.Done()
 }
 
@@ -145,12 +144,12 @@ func (t *LOLAction) LOL(command string, c *gin.Context) {
 			t.AddCommandHistory(redir, c)
 			return
 		}
-		c.AbortWithError(http.StatusNotFound, fmt.Errorf("no endpoint found"))
+		_ = c.AbortWithError(http.StatusNotFound, fmt.Errorf("no endpoint found"))
 	}
 
 	m, mok := reflectionCache[entry.Type]
 	if !mok {
-		c.AbortWithError(http.StatusNotFound, fmt.Errorf("no endpoint found"))
+		_ = c.AbortWithError(http.StatusNotFound, fmt.Errorf("no endpoint found"))
 		return
 	}
 

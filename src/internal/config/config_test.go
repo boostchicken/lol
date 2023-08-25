@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"net/http/httptest"
 	"testing"
 
@@ -33,8 +34,11 @@ func Test_RedirectVarArgs(t *testing.T) {
 			gin.SetMode(gin.TestMode)
 
 			w := httptest.NewRecorder()
+			url := "http://localhost:6969/lol?q=github boostchicken lol"
+			request, _ := http.NewRequest(http.MethodGet, url, nil)
+			request.RequestURI = url
 			ctx, _ := gin.CreateTestContext(w)
-
+			ctx.Request = request
 			c.CacheConfig()
 			tt.action.LOL("github boostchicken lol", ctx)
 			log.Println(w.Result())

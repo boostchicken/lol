@@ -2,7 +2,7 @@ bind: :6969
 entries:
     - command: g
       type: Redirect
-      value: https://www.google.com/search?q=%s
-    - command: 'tests '
+      value: https://google.com/search?q=%s
+    - command: nas
       type: Alias
-      value: https://cnn.com
+      value: bas
