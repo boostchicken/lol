@@ -1,15 +1,18 @@
  # boostchicken - lol
-A clone of Meta's bunnylol service written in go, configuration is via a YAML file
+A clone of Meta's bunnylol service written in go.
 
 ## Features
 1. A UI and accompnaying REST endpoints to add or delete commands on the fly
 2. Chrome Extension for querying your commands
 3. History (last 250 queries and their result)
-
+4. Config auto generation, only ned tyo change if you want to run on a different port than 8080
+   
 ## Roadmap
-1. Passkey Auth
-2. SaaS Platform, no need for user to run self-hosted.
-3. Swagger API / Spec for client generation
+1. Move away from CRA (probably to Next.js or Remix)
+2. Passkey Auth
+3. Kube support, Multi Tenancy via k8s
+4. Helm chart
+5. Swagger API / Spec for client generation
    
 ### Usage
 1. Deploy the docker container and expose the port you configured 
@@ -20,7 +23,7 @@ Reverse Proxy: https://lol.boostchicken.dev/lol?q=%s
 ```
 
 ### UI
-The UI is capable of managing config.yaml with no rehash or restarts  You can add and delete commnds on the fly
+The UI is capable of managing config.yaml with no rehash or restarts. You can add and delete commnds on the fly
 ```
 Default: https://127.0.0.1:8080/
 Reverse Proxy: https://lol.boostchicken.dev/
@@ -66,55 +69,70 @@ ghuser boostchicken -> https://www.github.com/boostchicken
 
 ghr boostchicken lol -> https://www.github.com/boostchicken/lol
 
-### Config
-*GET* /rehash 
 
-```Reloads the configuration.  For use after editing config via filesystem```
+### Config REST API 
 
+*DELETE* /delete/:command
 
-*PUT* /config *Deprecated*
+```Delete config entry by command```
+* ```:command``` LoL Command
 
-```Replaces the configuration file in memory, does not write it to disk.  Rehashes server after update.  This will not cause the server to rebind```
+*PUT* /add/:command/:type?url=:url
 
+```Add Command```
+
+* ```:command``` LoL Command"
+* ```:type``` one of [Alias,Redirect,RedirectVarArgs]
+* ```:url``` printf format url
 
 *Headers*
 1. Content-Type 
-   ```application/yaml```
+   ```application/json```
 
 Body
   * A config string that matches your header format (Yaml, JSON, TOML, etc)
-```yaml
----
-bind: "0.0.0.0:6969"
-entries: 
-  - command: g
-    type: Redirect
-    value: https://www.google.com/search?q=%s
-  - command: github
-    type: RedirectVarArgs
-    value: https://www.github.com/%s/%s
-  - command: pihole
-    type: Alias   
-    value: http://pi.hole
+```json
+{
+  "bind": "0.0.0.0:6969",
+  "entries": [
+    {
+      "command": "g",
+      "type": "Redirect",
+      "value": "https://www.google.com/search?q=%s"
+    },
+    {
+      "command": "github",
+      "type": "RedirectVarArgs",
+      "value": "https://www.github.com/%s/%s"
+    },
+    {
+      "command": "pihole",
+      "type": "Alias",
+      "value": "http://pi.hole"
+    }
+  ]
+}
  ```
 
-*Headers*
+*GET* /liveconfig
 
-*GET* /config
-
-```Returns the current config in YAML```
+```Returns the current config in JSON```
 
 
-* Content-Type: ```application/yaml```
+* Content-Type: ```application/json```
 
 *Body*
-```yaml
----
-bind: "0.0.0.0:6969"
-entries: 
-  - command: g
-    type: Redirect
-    value: https://www.google.com/search?q=%s
+```json
+{
+  "bind": "0.0.0.0:6969",
+  "entries": [
+    {
+      "command": "g",
+      "type": "Redirect",
+      "value": "https://www.google.com/search?q=%s"
+    }
+  ]
+}
  ```
 
 ## Docker Build
@@ -132,6 +150,10 @@ Use the provided devcontainer locally or in codespaces, there is a Makefile to b
 If you want to contribute but lack hardware for dev, I will add you to the repo and cover your codespaces cost.  Open an Issue if neeeded.
 
 ### Config Mounting example
+```-v /tmp/config.yaml:/go/config.yaml```
 * No longer needed unless you want to change the port, just boot the image and use the UI
 
-```-v /tmp/config.yaml:/go/config.yaml```
+### Easter Egg. 
+* Find the REAL Boostchicken
+* You can of course look at the source and cheat, but don't be lame
+* First person to tell me the color of it gets a reward!
