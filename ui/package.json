@@ -11,11 +11,12 @@
     "swr": "^2.2.1"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.1",
+    "@openapitools/openapi-generator-cli": "^2.7.0",
     "@testing-library/jest-dom": "^6.1.2",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
-    "react-scripts": "^5.0.1",
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.1"
+    "react-scripts": "^5.0.1"
   },
   "scripts": {
     "start": "react-scripts start",

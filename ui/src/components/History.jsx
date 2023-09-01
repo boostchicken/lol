@@ -9,7 +9,7 @@ import useSWR, {preload} from 'swr'
 function History(props) {    
     const fetcher = url => fetch(url).then(res => res.json())
     preload("/history", fetcher)
-    const { data, error, isLoading } = useSWR("/history", fetcher, { refreshInterval: 5000 })
+    const { data, error, isLoading } = useSWR("/history", fetcher)
     if(error) return(<div>Error</div>)
     if(isLoading) return(<Spinner animation="border"  variant='primary'/>)
     return(
