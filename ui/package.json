@@ -1,28 +1,43 @@
 {
   "name": "boostchicken-lol-ui",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "private": true,
   "dependencies": {
+    "@kubb/core": "^1.6.1",
+    "@kubb/swagger": "^1.6.1",
+    "@kubb/swagger-client": "^1.6.1",
+    "@kubb/swagger-swr": "^1.6.1",
+    "@kubb/swagger-ts": "^1.6.1",
+    "@types/jest": "^29.5.4",
+    "@types/node": "^20.5.7",
+    "@types/react": "^18.2.21",
+    "@types/react-bootstrap": "0.32.32",
+    "@types/react-dom": "^18.2.7",
     "bootstrap": "^5.3.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.9.0-beta.1",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.15.0",
     "sass": "^1.66.1",
-    "swr": "^2.2.1"
+    "swagger-ui-react": "^5.4.2",
+    "swr": "^2.2.2",
+    "typescript": "^5.2.2",
+    "react-scripts": "^5.0.1"
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.1",
-    "@openapitools/openapi-generator-cli": "^2.7.0",
+    "@kubb/cli": "^1.6.1",
     "@testing-library/jest-dom": "^6.1.2",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
-    "react-scripts": "^5.0.1"
+    "prettier": "^3.0.3"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "generate": "kubb generate --config ./kubb.config.mjs"
   },
   "eslintConfig": {
     "extends": [

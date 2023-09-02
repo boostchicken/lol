@@ -51,7 +51,7 @@ func main() {
 	r := gin.Default()
 	r.Use(cors.Default())
 	r.Use(static.Serve("/", static.LocalFile("./ui/build/", true)))
-
+	r.Use(static.Serve("/api", static.LocalFile("./ui/build/", true)))
 	r.GET("/rehash", InvokeRehash).GET("/config", RenderConfig).GET("/liveconfig", RenderConfigJSON).GET("/lol", Invoke).PUT("/add/:command/:type", AddCommand).DELETE("/delete/:command", DeleteCommand)
 	r.GET("/history", RenderHistory)
 

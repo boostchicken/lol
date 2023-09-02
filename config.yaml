@@ -3,6 +3,12 @@ entries:
     - command: g
       type: Redirect
       value: https://google.com/search?q=%s
-    - command: nas
+    - command: wetdftgsefg
+      type: RedirectVarArgs
+      value: sdg
+    - command: asafd
       type: Alias
-      value: bas
+      value: www
+    - command: naws
+      type: Alias
+      value: asdfsf
