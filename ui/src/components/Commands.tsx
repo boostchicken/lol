@@ -59,7 +59,7 @@ function Commands(props: CommandProps) {
       .catch((err) => {
         toastText(`error ${err}`);
       });
-  }, [deleteCmd, mutate,delValue,toastText])
+  }, [deleteCmd, mutate,delValue,toastText]);
   
   const addEntry = () => {
     async function fetch() {
