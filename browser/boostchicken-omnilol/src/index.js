@@ -1,7 +1,13 @@
 let conf = {
+    scheme: "https",
+    host: "lol.boostchicken.io",
+    renderUrl: function() {
+        return `${this.scheme}://${this.host}/liveconfig`
+    },
+    Entries: []
 }
+let url = conf.renderUrl();
 
-let url = "https://lol.boostchicken.dev/liveconfig"
 async function cache() {
     try {
         fetch(url)
@@ -30,7 +36,7 @@ chrome.omnibox.onInputChanged.addListener((text, suggest) => {
     const results = []
     const action = text.trim();
     const args = action.split(' ');
-    if(args[0] == "setUrl") {
+    if("set" in  args[0]) {
         url = args[1];
         results.push({content: "setUrl", description: `setUrl ${url} for liveconfig (e.g setUrl https://lol.boostchicken.dev/liveconfig)`})
         suggest(results)
@@ -58,6 +64,11 @@ chrome.omnibox.onInputEntered.addListener((term, OnInputEnteredDisposition) => {
     }
     if(term.split(" ")[0] == "setUrl") {
         url = term.split(" ")[1]
+
+    } else if(term.split(" ")[0] == "setScheme") {
+        conf.scheme = term.split(" ")[1]
+    } else if(term.split(" ")[0] == "setHost") {
+        conf.scheme = term.split(" ")[1]
     } else {
         chrome.search.query({
             disposition: tab_disposition, 

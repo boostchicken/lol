@@ -51,8 +51,8 @@ func main() {
 	r := gin.Default()
 	r.Use(cors.Default())
 	r.Use(static.Serve("/", static.LocalFile("./ui/build/", true)))
-
-	r.GET("/rehash", InvokeRehash).GET("/config", RenderConfig).GET("/liveconfig", RenderConfigJSON).GET("/lol", Invoke).PUT("/add/:command/:type", AddCommand).DELETE("/delete/:command", DeleteCommand)
+	r.Use(static.Serve("/api", static.LocalFile("./ui/build/", true)))
+	r.GET("/config", RenderConfig).GET("/liveconfig", RenderConfigJSON).GET("/lol", Invoke).PUT("/add/:command/:type", AddCommand).DELETE("/delete/:command", DeleteCommand)
 	r.GET("/history", RenderHistory)
 
 	log.Println("Listening on", config.CurrentConfig.Bind)
@@ -122,15 +122,6 @@ func AddCommand(c *gin.Context) {
 	config.CurrentConfig.WriteConfig()
 	config.CurrentConfig.CacheConfig()
 	c.JSON(200, config.CurrentConfig)
-}
-
-// InvokeRehash HTTP: GET /rehash
-// Renders current config as YAML
-func InvokeRehash(c *gin.Context) {
-	config.CurrentConfig.RehashConfig()
-	c.YAML(200, gin.H{
-		"message": "Rehashed",
-	})
 }
 
 var t config.LOLAction = config.LOLAction{}
