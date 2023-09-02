@@ -42,6 +42,7 @@
   "eslintConfig": {
     "extends": [
       "plugin:react-hooks/recommended",
+      "plugin:react-hooks/recommended",
       "react-app",
       "react-app/jest"
     ]
@@ -53,6 +54,7 @@
       "not op_mini all"
     ],
     "development": [
+      "last 3 chrome version",
       "last 3 chrome version",
       "last 1 firefox version",
       "last 1 safari version"

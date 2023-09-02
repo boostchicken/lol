@@ -2,12 +2,15 @@ package main // import "github.com/boostchicken/cmd/lol"
 
 import (
 	"errors"
+	"errors"
 	"log"
 	"net/http"
 	"os"
 	"strings"
+	"strings"
 
 	"github.com/boostchicken/internal/config"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
@@ -50,10 +53,12 @@ func main() {
 
 	r := gin.Default()
 	r.Use(cors.Default())
+	r.Use(cors.Default())
 	r.Use(static.Serve("/", static.LocalFile("./ui/build/", true)))
 	r.Use(static.Serve("/api", static.LocalFile("./ui/build/", true)))
 	r.GET("/rehash", InvokeRehash).GET("/config", RenderConfig).GET("/liveconfig", RenderConfigJSON).GET("/lol", Invoke).PUT("/add/:command/:type", AddCommand).DELETE("/delete/:command", DeleteCommand)
 	r.GET("/history", RenderHistory)
+
 
 	log.Println("Listening on", config.CurrentConfig.Bind)
 
@@ -104,6 +109,21 @@ func RenderHistory(c *gin.Context) {
 // c gin.Context
 // Adds a new command and saves
 func AddCommand(c *gin.Context) {
+	typevar := c.Param("type")
+	switch typevar {
+	case "Redirect":
+		break
+	case "RedirectVarArgs":
+		break
+	case "Alias":
+		break
+	default:
+		_ = c.AbortWithError(501, errors.New("Invalid type"))
+	}
+	config.CurrentConfig.Entries = append(config.CurrentConfig.Entries, config.LOLEntry{
+		Command: strings.ToLower(strings.TrimSpace(c.Param("command"))),
+		Type:    typevar,
+		Value:   c.Query("url")})
 	typevar := c.Param("type")
 	switch typevar {
 	case "Redirect":
