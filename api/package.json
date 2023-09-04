@@ -1,0 +1,40 @@
+{
+  "name": "@boostchicken/lol-api",
+  "version": "1.0.0",
+  "description": "Genreated API fgor Boostchickens LOL clone",
+  "main": "./src/index.ts",
+  "type": "module",
+  "types": "./src/index.d.ts",
+
+  "exports": {
+      ".": "./src/index.ts",
+      "./hooks/*.ts": "./src/hooks/index.ts",
+      "./models/*.ts": "./src/models/index.ts"
+    },
+
+  "scripts": {
+    "build": "esbuild --bundle src/index.ts --outdir=dist  --sourcemap ",
+    "start": "esbuild  --watch ",
+    "typecheck": "tsc ./src/index.ts --declaration --emitDeclarationOnly",
+    "generate": "kubb generate"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/boostchicken/lol.git"
+  },
+  "author": "boostchicken",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/boostchicken/lol/issues"
+  },
+  "dependencies": {
+    "@kubb/cli":"1.6.3",
+    "@kubb/core": "1.6.3",
+    "@kubb/swagger": "1.6.3",
+    "@kubb/swagger-client":"1.6.3",
+    "@kubb/swagger-swr": "1.6.3",
+    "@kubb/swagger-ts": "1.6.3",
+    "swr": "^2.2.2",
+    "axios": "^1.5.0"
+  }
+}

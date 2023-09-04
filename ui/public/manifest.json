@@ -1,24 +1,31 @@
 {
+  "id": "boostchicken.lol",
   "short_name": "lol",
   "name": "BoostchickenLOL (BunnyLOL Clone)",
   "icons": [
     {
       "src": "favicon.ico",
-      "sizes": "32x32 16x16",
+      "sizes": "64x64",
       "type": "image/x-icon"
     },
     {
-      "src": "/android-chrome-192x192.png",
+      "src": "/icon2.png",
       "sizes": "192x192",
       "type": "image/png"
    },
    {
-    "src": "/android-chrome-512x512.png",
+    "src": "/icon.png",
     "sizes": "512x512",
     "type": "image/png"
     }
   ],
-  "start_url": ".",
+  "protocol_handlers": [
+    {
+      "protocol": "lol+web",
+      "url": "/lol?q=%s"
+    }
+  ],
+  "start_url": "/",
   "display": "standalone",
   "theme_color": "#282c34",
   "background_color": "#282c34"

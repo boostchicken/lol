@@ -9,6 +9,6 @@ entries:
     - command: asafd
       type: Alias
       value: www
-    - command: naws
+    - command: nas
       type: Alias
-      value: asdfsf
+      value: www

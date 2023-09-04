@@ -1,0 +1,194 @@
+openapi: '3.0.2'
+info:
+  title: BoostchickenLOL
+  description: A bunnyLoL clone that is feature rich and light weight.
+  version: '4.2.0'
+  contact:
+    name: "John D."
+    url: "https://www.boostchicken.io"
+    email: john@boostchicken.dev
+  license:
+    name: MIT License
+  
+servers:
+  - url: https://lol.boostchicken.io
+  - url: http://localhost:6969
+  - url: http://localhost:8080
+
+components:
+  schemas:
+    config:
+      description: Format of our configuration file used in many APIs
+      type: object
+      title: LOLConfig
+      required:
+        - "Bind"
+        - "Entries"
+      properties:
+        Bind:
+          description: The host and port to bind too (eg 0.0.0.0:8080)
+          type: string
+        Entries:
+          title: LOLCommands
+          description: "Array of all current commands"
+          required:
+            - "Command"
+            - "Value"
+            - "Type"
+          type: array
+          items:
+            title: Command
+            properties:
+              Command:
+                type: string
+                description: The command to associate to this url
+              Value:
+                type: string
+                description: A string following golang printf format for the URL to goto
+              Type:
+                type: string
+                enum:
+                - Alias
+                - Redirect
+                - RedirectVarArgs
+                description: Execution mode for the command.  Must be one of "Alias", "Redirect", "RedirectVarArgs"
+    history:
+      description: List of last 250 commands
+      type: array
+      title: HistoryList
+      items:
+        title: HistoryEntry
+        type: object
+        properties:
+          Command:
+            type: string
+          Result:
+            type: string
+            format: url 
+paths:
+  /config:
+    summary: Get the current config in your format of choice
+    get:
+      operationId: getConfig
+      deprecated: true
+      tags:
+        - "configuration"
+        - "noclient"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/config"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/config"
+            application/yaml:
+              schema:
+                $ref: "#/components/schemas/config"
+  /history:
+    get:
+      summary: Get all history tab entries (max 250)
+      operationId: getHistory
+      tags:
+        - "history"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/history"
+  /liveconfig:
+    get:
+      summary: 'Get current configuration in JSON for UI'
+      description: "liveconfig has the same return value of config with a contentype of JSON.  However this just exists to make that fool proof"
+      operationId: getLiveConfig
+      tags:
+        - "configuration"
+        - "ui"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/config"
+  /delete/{command}:
+    delete:
+      summary: Delete a command from the config
+      parameters:
+        - name: command
+          required: true
+          in: path
+          schema:
+            type: string
+      operationId: "deleteCommand"
+      tags:
+        - "configuration"
+        - "ui"
+      responses:
+        '200':
+          description: "Command Deleted"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/config"
+  /add/{command}/{type}:
+    put:
+      summary: Add a command  to the config
+      description: >
+        Add a command to the config and reloads the cache. All strings will be trimmed, please URLEncode your url parameter.
+      parameters:
+        - name: command
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: type
+          required: true
+          in: path
+          schema:
+            type: string
+            enum:
+               - Alias
+               - Redirect
+               - RedirectVarArgs
+        - name: url
+          in: query
+          required: true
+          schema:
+            type: string
+      operationId: addCommand
+      tags:
+        - "configuration"
+        - "ui"
+      responses:
+        '200':
+          description: "Command Added"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/config"  
+  /lol:
+    get:
+      summary: Redirect user based on the command provided
+      description: > 
+       The main entry point of LOL, this is where everything happens
+      parameters:
+        - name: q
+          description: This is your LOL query (eg github boostchicken lol)
+          in: query
+          required: true
+          schema:
+            type: string
+      operationId: executeLol
+      tags:
+        - "execute"
+        - "noclient"
+      responses:
+        '404':
+          description: Command not found
+        '302':
+          description: Command found and redirecting you to your destination
