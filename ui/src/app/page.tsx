@@ -19,11 +19,6 @@ function App() {
       setShowToast(true);
     }
   }, [toastText]);
-    useEffect(() => {
-  nv.NODE_ENV !== "production"
-     const wb = new Workbox("sw.js", { scope: "/" });
-      wb.register();
-    }, []);
 
   return (
     <>

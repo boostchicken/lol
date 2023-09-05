@@ -1,15 +1,6 @@
 /** @type {import('next').NextConfig} */
 const { PHASE_DEVELOPMENT_SERVER } = require('next/constants')
- const withWorkbox = require("next-with-workbox");
-
-module.exports = withWorkbox({
-  workbox: {
-    dest: "public",
-    swDest: "sw.js",
-    swSrc: "worker.js",
-    force: true,
-  },
-});
+ 
 module.exports = (phase, { defaultConfig }) => {
   if (phase === PHASE_DEVELOPMENT_SERVER) {
     return {
