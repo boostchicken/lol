@@ -20,7 +20,7 @@ COPY ./ui/ /app/ui
 WORKDIR /app/ui
 RUN npm install react-scripts  --force && npm run build 
 
-FROM alpine:3.18.3
+FROM alpine:3.18.4
 RUN mkdir /go
 COPY --from=builder /app/lol /go/boostchickenlol
 COPY --from=nodejs /app/ui/ /go/ui/
