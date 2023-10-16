@@ -1,5 +1,5 @@
 
-FROM golang:1.21.0-alpine3.18 as builder
+FROM golang:1.21.3-alpine3.18 as builder
 RUN mkdir -p /app
 WORKDIR /app
 
@@ -18,9 +18,9 @@ FROM node as nodejs
 RUN mkdir /app
 COPY ./ui/ /app/ui
 WORKDIR /app/ui
-RUN npx next build
+RUN pnpm build
 
-FROM alpine:3.18.3
+FROM alpine:3
 RUN mkdir /go
 COPY --from=builder /app/lol /go/boostchickenlol
 COPY --from=nodejs /app/ui/ /go/ui/

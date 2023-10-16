@@ -11,23 +11,13 @@ module.exports = (phase, { defaultConfig }) => {
             }]}
         },
         reactStrictMode: true,
-        transpilePackages: ['@boostchicken/lol-api'],
-        modularizeImports: {
-            '@boostchicken/lol-api': {
-                transform: '@boostchicken/lol-api/hooks/{{ member }}'
-            }
-        },
+        transpilePackages: ['@boostchicken/lol-api']
     }
   }
  
     return {
         output: 'export',
         reactStrictMode: true,
-        transpilePackages: ['@boostchicken/lol-api'],
-        modularizeImports: {
-            '@boostchicken/lol-api': {
-                transform: '@boostchicken/lol-api/hooks/{{ member }}'
-            }
-        },
+        transpilePackages: ['@boostchicken/lol-api']
     }
 }

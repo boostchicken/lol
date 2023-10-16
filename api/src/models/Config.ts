@@ -20,16 +20,16 @@ export type Config = {
      * @description The command to associate to this url
      * @type string | undefined
      */
-    Command?: string | undefined;
+    Command?: string;
     /**
      * @description A string following golang printf format for the URL to goto
      * @type string | undefined
      */
-    Value?: string | undefined;
+    Value?: string;
     /**
      * @description Execution mode for the command.  Must be one of "Alias", "Redirect", "RedirectVarArgs"
      * @type string | undefined
      */
-    Type?: ConfigEntriesType | undefined;
+    Type?: ConfigEntriesType;
   }[];
 };

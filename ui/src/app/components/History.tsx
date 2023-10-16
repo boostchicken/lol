@@ -2,10 +2,10 @@
 import Table from "react-bootstrap/Table";
 import Badge from "react-bootstrap/Badge";
 import Container from "react-bootstrap/Container";
-import * as api from "@boostchicken/lol-api";
+import {useGetHistory} from "@boostchicken/lol-api";
 
 function History() {
-  const { data: history } = api.useGetHistory();
+  const { data: history } = useGetHistory();
   return (
     <Container>
       <h3>

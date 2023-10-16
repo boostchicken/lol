@@ -8,7 +8,6 @@ import Spinner from 'react-bootstrap/Spinner';
 import Container from "react-bootstrap/Container";
 import Logo from "./components/Logo";
 
-import { Workbox } from "workbox-window";
 
 function App() {
   const [showToast, setShowToast] = useState(false);

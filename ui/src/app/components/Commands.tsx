@@ -1,11 +1,10 @@
 "use client";
 import {
-  Suspense,
   useState,
   Dispatch,
   SetStateAction,
   useEffect,
-  useDebugValue
+
 } from "react";
 import Table from "react-bootstrap/Table";
 import Badge from "react-bootstrap/Badge";
@@ -14,7 +13,7 @@ import Form from "react-bootstrap/Form";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Button from "react-bootstrap/Button";
 import Link from "next/link";
-import *  as api from "@boostchicken/lol-api";
+import {useGetLiveConfig, Config, useAddCommand, useDeleteCommand, addCommandPathParamsType} from "@boostchicken/lol-api";
 
 interface CommandProps {
   toastText: Dispatch<SetStateAction<string>>;
@@ -28,30 +27,30 @@ function Commands(props: CommandProps) {
   const [newValue, setNewValue] = useState("");
   const [delValue, setDelValue] = useState("");
 
-  const { data: config, mutate, error } =api.useGetLiveConfig();
-  const { trigger: addCmd } = api.useAddCommand(newCommand, getTypeValue(), {
+  const { data: config, mutate, error } = useGetLiveConfig();
+  const { trigger: addCmd } = useAddCommand(newCommand, getTypeValue(), {
     url: newValue,
   });
-  const { trigger: deleteCmd } = api.useDeleteCommand(delValue);
+  const { trigger: deleteCmd } = useDeleteCommand(delValue);
 
   function getTypeValue() {
     switch (newType) {
       case "Alias":
-        return api.addCommandPathParamsType.Alias;
+        return addCommandPathParamsType.Alias;
       case "Redirect":
-        return api.addCommandPathParamsType.Redirect;
+        return addCommandPathParamsType.Redirect;
       case "RedirectVarArgs":
-        return api.addCommandPathParamsType.RedirectVarArgs;
+        return addCommandPathParamsType.RedirectVarArgs;
     }
-    return api.addCommandPathParamsType.Alias;
+    return addCommandPathParamsType.Alias;
   }
 
   useEffect(() => {
-    async function fetch() {
-      return mutate(deleteCmd());
+    async function mutateCmd() {
+      return deleteCmd().then((resp:Config) => {mutate(resp)});
     }
     if(delValue === "") return
-    fetch()
+    mutateCmd()
       .then(() => {
         toastText(`Deleted ${delValue}`);
       })
@@ -61,10 +60,10 @@ function Commands(props: CommandProps) {
   }, [deleteCmd, mutate,delValue,toastText]);
   
   const addEntry = () => {
-    async function fetch() {
-      return mutate(addCmd());
+    async function addNew() {
+      return addCmd().then((resp:any) => {mutate(resp)});
     }
-    fetch()
+    addNew()
       .then(() => {
         toastText(`Added ${newCommand}`);
       })

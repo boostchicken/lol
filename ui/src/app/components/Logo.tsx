@@ -1,10 +1,12 @@
 'use client';
 import Image from "next/image";
-import boostchicken from "./../../boostchicken.svg";
-import rs7 from "../../boostchicken.png";
+import boostchicken from "../boostchicken.svg";
+import rs7 from "../boostchicken.png";
 import { useRef, useEffect, useState } from "react";
 
 const Logo = () => {
+
+  
   const [title, setTitle] = useState("A wild boostchicken apears!");
   const src = useRef(boostchicken);
   useEffect(() => {

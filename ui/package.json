@@ -1,6 +1,6 @@
 {
-  "name": "uiv2",
-  "version": "0.1.0",
+  "name": "boostlol-ui",
+  "version": "2.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -9,23 +9,22 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "bootstrap": "^5.3.2",
+    "next": "13.5.5",
+    "react": "^18.2.0",
+    "react-bootstrap": "^2.9.0",
+    "react-dom": "18.2.0",
+    "sharp": "^0.32.6",
+    "swagger-ui-react": "^5.9.0",
+    "swr": "^2.2.4"
+  },
+  "devDependencies": {
+    "@tsconfig/next": "^2.0.1",
     "@types/node": "20.5.9",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
-    "bootstrap": "^5.3.1",
     "eslint": "8.48.0",
-    "eslint-config-next": "13.4.19",
-    "next": "13.4.19",
-    "next-with-workbox": "^3.0.5",
-    "react": "^18.2.0",
-    "react-bootstrap": "^2.8.0",
-    "react-dom": "18.2.0",
-    "sharp": "^0.32.5",
-    "swagger-ui-react": "^5.5.0",
-    "swr": "^2.2.2",
+    "eslint-config-next": "13.5.4",
     "typescript": "5.2.2"
-  },
-  "devDependencies": {
-    "@tsconfig/next": "^2.0.0"
   }
 }

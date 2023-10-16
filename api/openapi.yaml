@@ -1,8 +1,8 @@
-openapi: '3.0.2'
+openapi: '3.0.3'
 info:
   title: BoostchickenLOL
   description: A bunnyLoL clone that is feature rich and light weight.
-  version: '4.2.0'
+  version: '5.0.0'
   contact:
     name: "John D."
     url: "https://www.boostchicken.io"
