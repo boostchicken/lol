@@ -20,8 +20,11 @@ ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable && corepack prepare pnpm@latest --activate
 RUN mkdir /app
 COPY ./ui/ /app/ui
+copy  ./api /app/api
+WORKDIR /app/api
+RUN pnpm install && pnpm link .
 WORKDIR /app/ui
-RUN pnpm install && pnpm build
+RUN pnpm install && pnpm link /app/api && pnpm build
 
 FROM alpine:3
 RUN mkdir /go
