@@ -14,14 +14,14 @@ vet: fmt
 	cd ./src/cmd/lol && go vet main.go
 .PHONY:vet
 ui: vet
-	 cd ui && npx next build
+	 cd ui && pnpm build
 PHONY: ui
 build: ui
 	 cd ./src/cmd/lol/ && go build -ldflags="-s -w" -o ../../../bin/lol 
 .PHONY:build
 
 debugui:
-	cd ui && npx next dev
+	cd ui && pnpm dev
 		
 doc: build
 	godoc

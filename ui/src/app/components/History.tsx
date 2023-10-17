@@ -8,7 +8,7 @@ function History() {
   const { data: history } = useGetHistory();
   return (
     <Container>
-      <h3>
+      <h3 className="input-group-text" style={{display: 'block'}}>
         History <Badge bg="primary">{history?.length}</Badge>
       </h3>
       <Table responsive striped bordered hover variant="dark">

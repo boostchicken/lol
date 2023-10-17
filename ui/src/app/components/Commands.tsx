@@ -3,7 +3,7 @@ import {
   useState,
   Dispatch,
   SetStateAction,
-  useEffect,
+  useEffect
 
 } from "react";
 import Table from "react-bootstrap/Table";
@@ -13,7 +13,7 @@ import Form from "react-bootstrap/Form";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Button from "react-bootstrap/Button";
 import Link from "next/link";
-import {useGetLiveConfig, Config, useAddCommand, useDeleteCommand, addCommandPathParamsType} from "@boostchicken/lol-api";
+import {useGetLiveConfig, useAddCommand, useDeleteCommand, addCommandPathParamsType} from "@boostchicken/lol-api";
 
 interface CommandProps {
   toastText: Dispatch<SetStateAction<string>>;
@@ -27,7 +27,7 @@ function Commands(props: CommandProps) {
   const [newValue, setNewValue] = useState("");
   const [delValue, setDelValue] = useState("");
 
-  const { data: config, mutate, error } = useGetLiveConfig();
+  const { data:conf, mutate: reloadConf, error } = useGetLiveConfig();
   const { trigger: addCmd } = useAddCommand(newCommand, getTypeValue(), {
     url: newValue,
   });
@@ -47,7 +47,7 @@ function Commands(props: CommandProps) {
 
   useEffect(() => {
     async function mutateCmd() {
-      return deleteCmd().then((resp:Config) => {mutate(resp)});
+      deleteCmd().then(() => {reloadConf()});
     }
     if(delValue === "") return
     mutateCmd()
@@ -57,11 +57,11 @@ function Commands(props: CommandProps) {
       .catch((err) => {
         toastText(`error ${err}`);
       });
-  }, [deleteCmd, mutate,delValue,toastText]);
+  }, [deleteCmd, reloadConf,delValue,toastText]);
   
   const addEntry = () => {
     async function addNew() {
-      return addCmd().then((resp:any) => {mutate(resp)});
+      addCmd().then(() => {reloadConf()})
     }
     addNew()
       .then(() => {
@@ -76,8 +76,8 @@ function Commands(props: CommandProps) {
 
   return (
     <Container>
-      <h3>
-        Commands <Badge bg="danger"> {config?.Entries?.length} </Badge>
+      <h3 className="input-group-text" style={{display: 'block'}}>
+        Commands <Badge bg="danger"> {conf?.Entries?.length} </Badge>
         <Link href="/api">
           <Button variant="danger">API Docs</Button>
         </Link>
@@ -85,10 +85,10 @@ function Commands(props: CommandProps) {
         <Table striped bordered hover variant="dark">
           <thead>
             <tr>
-              <th>Command</th>
-              <th>Mode</th>
-              <th>URL Template</th>
               <th></th>
+              <th></th>
+              <th></th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -132,7 +132,7 @@ function Commands(props: CommandProps) {
                 </Button>
               </td>
             </tr>
-            {config?.Entries.map((item, idx) => (
+            {conf?.Entries?.map((item, idx) => (
               <tr key={idx}>
                 <td>{item.Command}</td>
                 <td>{item.Type}</td>

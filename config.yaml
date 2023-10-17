@@ -12,3 +12,9 @@ entries:
     - command: nas
       type: Alias
       value: www
+    - command: po
+      type: Alias
+      value: op
+    - command: po
+      type: RedirectVarArgs
+      value: sdg
