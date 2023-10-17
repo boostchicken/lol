@@ -47,18 +47,19 @@ func main() {
 	} else {
 		gin.SetMode(gin.ReleaseMode)
 	}
-
+	fs := static.LocalFile("./ui/out/", true)
 	r := gin.Default()
-	r.Use(cors.Default())
-	r.Use(static.Serve("/", static.LocalFile("./ui/build/", true)))
-	r.Use(static.Serve("/api", static.LocalFile("./ui/build/", true)))
-	r.GET("/config", RenderConfig).GET("/liveconfig", RenderConfigJSON).GET("/lol", Invoke).PUT("/add/:command/:type", AddCommand).DELETE("/delete/:command", DeleteCommand)
-	r.GET("/history", RenderHistory)
+	r.Use(cors.Default(), static.Serve("/api", fs), static.Serve("/", fs))
+
+	r.GET("/config", RenderConfig).GET("/liveconfig", RenderConfigJSON)
+	r.GET("/lol", Invoke).GET("/history", RenderHistory)
+	r.PUT("/add/:command/:type", AddCommand).DELETE("/delete/:command", DeleteCommand)
 
 	log.Println("Listening on", config.CurrentConfig.Bind)
 
 	err4 := r.Run(config.CurrentConfig.Bind)
 	if err4 != nil && err4 != http.ErrServerClosed {
+		log.Fatal("unable to start server", err4)
 		os.Exit(1)
 	}
 }
@@ -130,17 +131,13 @@ var t config.LOLAction = config.LOLAction{}
 // c gin.Context
 // Query: q the actual command to run, space delimited
 func Invoke(c *gin.Context) {
-	command, ok := c.Params.Get("command")
-	if !ok {
-		q, qok := c.GetQuery("q")
-		if !qok {
-			c.YAML(501, gin.H{
-				"message": "No command provided",
-			})
-			return
-		}
-		t.LOL(q, c)
+	q, qok := c.GetQuery("q")
+	if !qok {
+		c.JSON(501, gin.H{
+			"message": "No command provided",
+		})
 		return
 	}
-	t.LOL(command, c)
+	t.LOL(q, c)
+	return
 }

@@ -1,64 +1,30 @@
 {
-  "name": "boostchicken-lol-ui",
-  "version": "3.0.0",
+  "name": "boostlol-ui",
+  "version": "2.1.0",
   "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
   "dependencies": {
-    "@kubb/core": "^1.6.1",
-    "@kubb/swagger": "^1.6.1",
-    "@kubb/swagger-client": "^1.6.1",
-    "@kubb/swagger-swr": "^1.6.1",
-    "@kubb/swagger-ts": "^1.6.1",
-    "@types/jest": "^29.5.4",
-    "@types/node": "^20.5.7",
-    "@types/react": "^18.2.21",
-    "@types/react-bootstrap": "0.32.32",
-    "@types/react-dom": "^18.2.7",
-    "bootstrap": "^5.3.1",
+    "bootstrap": "^5.3.2",
+    "next": "13.5.5",
     "react": "^18.2.0",
-    "react-bootstrap": "^2.9.0-beta.1",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.15.0",
-    "sass": "^1.66.1",
-    "swagger-ui-react": "^5.4.2",
-    "swr": "^2.2.2",
-    "typescript": "^5.2.2",
-    "react-scripts": "^5.0.1"
+    "react-bootstrap": "^2.9.0",
+    "react-dom": "18.2.0",
+    "sharp": "^0.32.6",
+    "swagger-ui-react": "^5.9.0",
+    "swr": "^2.2.4"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.1",
-    "@kubb/cli": "^1.6.1",
-    "@testing-library/jest-dom": "^6.1.2",
-    "@testing-library/react": "^14.0.0",
-    "@testing-library/user-event": "^14.4.3",
-    "prettier": "^3.0.3"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "generate": "kubb generate --config ./kubb.config.mjs"
-  },
-  "eslintConfig": {
-    "extends": [
-      "plugin:react-hooks/recommended",
-      "plugin:react-hooks/recommended",
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 3 chrome version",
-      "last 3 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "proxy": "http://localhost:6969"
+    "@tsconfig/next": "^2.0.1",
+    "@types/node": "20.5.9",
+    "@types/react": "18.2.21",
+    "@types/react-dom": "18.2.7",
+    "eslint": "8.48.0",
+    "eslint-config-next": "13.5.4",
+    "typescript": "5.2.2"
+  }
 }

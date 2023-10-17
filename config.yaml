@@ -9,6 +9,12 @@ entries:
     - command: asafd
       type: Alias
       value: www
-    - command: naws
+    - command: nas
       type: Alias
-      value: asdfsf
+      value: www
+    - command: po
+      type: Alias
+      value: op
+    - command: po
+      type: RedirectVarArgs
+      value: sdg

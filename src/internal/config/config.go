@@ -48,8 +48,8 @@ type Config struct {
 // CurrentConfig the current config loaded
 var CurrentConfig Config
 
-var cache map[string]LOLEntry                 // A Map that caches LOLEntry BY Command
-var reflectionCache map[string]reflect.Method // Caches the Method associated with the Type
+var cache map[string]LOLEntry = make(map[string]LOLEntry)                       // A Map that caches LOLEntry BY Command
+var reflectionCache map[string]reflect.Method = make(map[string]reflect.Method) // Caches the Method associated with the Type
 
 // RehashConfig Reload the config but do not rebind
 func (c *Config) RehashConfig() {
@@ -76,9 +76,6 @@ func (c Config) WriteConfig() []byte {
 
 // CacheConfig Generate ReflectionCache and Command Cache
 func (c *Config) CacheConfig() {
-	cache = make(map[string]LOLEntry)
-	reflectionCache = make(map[string]reflect.Method)
-
 	for _, e := range c.Entries {
 		cache[e.Command] = e
 		_, okm := reflectionCache[e.Type]
@@ -106,9 +103,9 @@ func (t *LOLAction) Redirect(c *gin.Context, url string, parts []string) {
 // AddCommandHistory add command execution to history cache
 func (t *LOLAction) AddCommandHistory(result string, c *gin.Context) {
 	wg.Add(1)
+	defer wg.Done()
 	ops++
 	_ = HistoryCache.Set(ops, History{Command: c.Query("q"), Result: result})
-	wg.Done()
 }
 
 // Alias A static redirect
@@ -144,12 +141,12 @@ func (t *LOLAction) LOL(command string, c *gin.Context) {
 			t.AddCommandHistory(redir, c)
 			return
 		}
-		_ = c.AbortWithError(http.StatusNotFound, fmt.Errorf("no endpoint found"))
+		_ = c.AbortWithError(http.StatusNotFound, fmt.Errorf("Unable to find cache entry for %s", explode[0]))
 	}
 
 	m, mok := reflectionCache[entry.Type]
 	if !mok {
-		_ = c.AbortWithError(http.StatusNotFound, fmt.Errorf("no endpoint found"))
+		_ = c.AbortWithError(http.StatusNotFound, fmt.Errorf("unale to find reflection cache entry for %s", entry.Type))
 		return
 	}
 
