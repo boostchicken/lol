@@ -20,7 +20,7 @@ ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable && corepack prepare pnpm@latest --activate
 RUN mkdir /app
 COPY ./ui/ /app/ui
-copy  ./api /app/api
+COPY  ./api /app/api
 WORKDIR /app/api
 RUN pnpm install && pnpm link .
 WORKDIR /app/ui
@@ -29,7 +29,7 @@ RUN pnpm install && pnpm link /app/api && pnpm build
 FROM alpine:3
 RUN mkdir /go
 COPY --from=builder /app/lol /go/boostchickenlol
-COPY --from=nodejs /app/ui/ /go/ui/
+COPY --from=nodejs /app/ui/out /go/ui/out
 WORKDIR /go
 
 LABEL org.opencontainers.image.maintainer="John Dorman <john@boostchicken.dev>"     
