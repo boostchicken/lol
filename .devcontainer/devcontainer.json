@@ -6,16 +6,16 @@
     "ghcr.io/devcontainers/features/go:1": {
     
     },
-    "ghcr.io/devcontainers/features/java:1.2.1": {
+
+      "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+
+    "ghcr.io/devcontainers/features/java:1.2.2": {
       "jdkDistro": "open",
       "installGradle": true
     },
     "ghcr.io/guiyomh/features/golangci-lint:0": {},
     "ghcr.io/devcontainers/features/common-utils:2": {
       "configureZshAsDefaultShell": true
-    },
-    "ghcr.io/devcontainers-contrib/features/npm-package:1": {
-      "package": "react-scripts"
     },
     "ghcr.io/devcontainers-contrib/features/gradle-sdkman:2": {
       "jdkDistro": "open"
