@@ -21,8 +21,7 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 RUN mkdir /app
 COPY ./ui/ /app/ui
 WORKDIR /app/ui
-RUN pnpm build
-
+RUN pnpm install && pnpm build
 
 FROM alpine:3
 RUN mkdir /go
