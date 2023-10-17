@@ -23,6 +23,7 @@ COPY ./ui/ /app/ui
 WORKDIR /app/ui
 RUN pnpm build
 
+
 FROM alpine:3
 RUN mkdir /go
 COPY --from=builder /app/lol /go/boostchickenlol
