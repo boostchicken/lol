@@ -10,7 +10,7 @@ const config= fetch("https://lol.boostchicken.io/liveconfig")
 .then((res) => res.json()).then((json) => {entries.push(json); console.log(json);});
 
 function xml_escape(unsafe: string) {
-    return unsafe.replace(/[<>&'"]/g, function (c) {
+    return unsafe.replace(/[<>&'"]/g, (c) => {
         switch (c) {
             case '<': return '&lt;';
             case '>': return '&gt;';
