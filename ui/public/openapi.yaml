@@ -1,11 +1,11 @@
 openapi: '3.0.2'
 info:
-  title: BoostchickenLOL
+  title: BoostLOL
   description: A bunnyLoL clone that is feature rich and light weight.
-  version: '4.2.0'
+  version: '5.0.0'
   contact:
     name: "John D."
-    url: "https://www.boostchicken.io"
+    url: "https://www.boostchicken.dev"
     email: john@boostchicken.dev
   license:
     name: MIT License
@@ -179,7 +179,7 @@ paths:
        The main entry point of LOL, this is where everything happens
       parameters:
         - name: q
-          description: This is your LOL query (eg github boostchicken lol)
+          description: This is your LOL query (eg github boostchicken lol).  Please URLEncode
           in: query
           required: true
           schema:
