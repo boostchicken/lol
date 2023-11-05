@@ -20,3 +20,4 @@ build
 release.zip
 node_modules
 dist
+.pnpm-store

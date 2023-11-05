@@ -1,4 +1,3 @@
-
 FROM golang:1.21.3-alpine3.18 as builder
 RUN mkdir -p /app
 WORKDIR /app
@@ -6,11 +5,9 @@ WORKDIR /app
 COPY ./src/ /app
 RUN go work sync
 WORKDIR /app/cmd/lol
-RUN go mod tidy
-RUN go mod download 
+RUN go mod tidy && go mod download 
 WORKDIR /app/internal/config
-RUN go mod tidy
-RUN go mod download 
+RUN go mod tidy &&  go mod download 
 WORKDIR /app
 RUN go build -ldflags "-s -w" -o /app/lol ./cmd/lol/main.go 
 
@@ -21,8 +18,6 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 RUN mkdir /app
 COPY ./ui/ /app/ui
 COPY  ./api /app/api
-WORKDIR /app/api
-RUN pnpm install && pnpm link .
 WORKDIR /app/ui
 RUN pnpm install && pnpm link /app/api && pnpm build
 

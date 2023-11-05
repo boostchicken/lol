@@ -14,7 +14,7 @@ vet: fmt
 	cd ./src/cmd/lol && go vet main.go
 .PHONY:vet
 ui: vet
-	 cd ui && pnpm build
+	 cd ui && pnpm link ../api && pnpm install && pnpm build
 PHONY: ui
 build: ui
 	 cd ./src/cmd/lol/ && go build -ldflags="-s -w" -o ../../../bin/lol 
