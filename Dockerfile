@@ -14,7 +14,7 @@ RUN go mod download
 WORKDIR /app
 RUN go build -ldflags "-s -w" -o /app/lol ./cmd/lol/main.go 
 
-FROM node:20-slim AS nodejs
+FROM node:21-slim AS nodejs
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable && corepack prepare pnpm@latest --activate
@@ -41,6 +41,6 @@ LABEL org.opencontainers.image.url="https://www.github.com/boostchicken/lol"
 LABEL org.opencontainers.image.source="https://www.github.com/boostchicken/lol"          
 LABEL org.opencontainers.image.documentation="https://www.github.com/boostchicken/lol/blob/main/README.md"
 LABEL org.opencontainers.image.description="bunnylol clone in go" 
-
+EXPOSE 8080 6969
 ENTRYPOINT [ "/go/boostchickenlol" ]
 CMD [ "bash"]
