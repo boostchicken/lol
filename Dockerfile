@@ -21,6 +21,7 @@ COPY  ./api /app/api
 WORKDIR /app/ui
 RUN pnpm install && pnpm link /app/api && pnpm build
 
+
 FROM alpine:3
 RUN mkdir /go
 COPY --from=builder /app/lol /go/boostchickenlol
