@@ -15,13 +15,13 @@ FROM node:21-slim AS nodejs
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable && corepack prepare pnpm@latest --activate
-RUN mkdir /app && pnpm install -g next@latest
+RUN mkdir -p /app
 COPY ./ui/ /app/ui
 COPY  ./api /app/api
 WORKDIR /app/api/
 RUN pnpm install && pnpm build 
 WORKDIR /app/ui
-RUN pnpm install && pnpm ln ../api && pnpm build
+RUN pnpm install && pnpm ln /app/api && pnpm build
 
 
 FROM alpine:3
