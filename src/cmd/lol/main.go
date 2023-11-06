@@ -114,7 +114,7 @@ func AddCommand(c *gin.Context) {
 	case "Alias":
 		break
 	default:
-		_ = c.AbortWithError(501, errors.New("Invalid type"))
+		_ = c.AbortWithError(501, errors.New("invalid type"))
 	}
 	config.CurrentConfig.Entries = append(config.CurrentConfig.Entries, config.LOLEntry{
 		Command: strings.ToLower(strings.TrimSpace(c.Param("command"))),
@@ -139,5 +139,4 @@ func Invoke(c *gin.Context) {
 		return
 	}
 	t.LOL(q, c)
-	return
 }
