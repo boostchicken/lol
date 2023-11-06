@@ -1,7 +1,7 @@
 {
   "name": "@boostchicken/lol-api",
-  "version": "2.0.0",
-  "description": "Genreated API fgor Boostchickens LOL clone",
+  "version": "2.2.0",
+  "description": "Genreated API for Boostchickens LOL clone",
   "main": "./src/index.ts",
   "type": "module",
   "types": "./src/index.d.ts",
@@ -37,6 +37,7 @@
     "typescript": "^5.2.2"
   },
   "devDependencies": {
+    "esbuild": "0.19.5",
     "@kubb/cli": "^1.14.6"
   }
 }
