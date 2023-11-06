@@ -32,7 +32,7 @@
     "@kubb/swagger-client": "1.14.6",
     "@kubb/swagger-swr": "1.14.6",
     "@kubb/swagger-ts": "1.14.6",
-    "axios": "^1.5.1",
+    "axios": "^1.6.0",
     "swr": "^2.2.4",
     "typescript": "^5.2.2"
   },

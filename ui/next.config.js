@@ -1,14 +1,5 @@
 /** @type {import('next').NextConfig} */
-const { PHASE_DEVELOPMENT_SERVER } = require('next/constants')
- 
 module.exports = (phase, { defaultConfig }) => {
-  if (phase === PHASE_DEVELOPMENT_SERVER) {
-    return {
-        output: 'export',
-        reactStrictMode: true,
-        transpilePackages: ['@boostchicken/lol-api']
-    }
-  }
  
     return {
         output: 'export',

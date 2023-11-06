@@ -1,20 +1,8 @@
 bind: :6969
 entries:
+    - command: po
+      type: RedirectVarArgs
+      value: sdg
     - command: g
       type: Redirect
       value: https://google.com/search?q=%s
-    - command: wetdftgsefg
-      type: RedirectVarArgs
-      value: sdg
-    - command: asafd
-      type: Alias
-      value: www
-    - command: nas
-      type: Alias
-      value: www
-    - command: po
-      type: Alias
-      value: op
-    - command: po
-      type: RedirectVarArgs
-      value: sdg
