@@ -1,22 +1,21 @@
 import './globals.css'
 import type { Metadata} from 'next'
-import { Inter } from 'next/font/google'
+import { Ubuntu_Mono } from 'next/font/google'
 
-const inter = Inter({ subsets: ['latin'] })
+const font = Ubuntu_Mono({ weight: '400', preload: true, subsets: ['latin'] })
 
 export const metadata: Metadata = {
   manifest: "manifest.json",
   title: "BoostLoL",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    viewportFit: "cover",
-    colorScheme: 'dark'
-  },
 
   description: "Admin interface for BoostLoL"
 }
-
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: 'dark',
+}
 export default function RootLayout({
   children,
 }: {
@@ -24,7 +23,7 @@ export default function RootLayout({
 }) {
   return (
     <html data-bs-theme="dark" lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={font.className}>{children}</body>
     </html>
   )
 }

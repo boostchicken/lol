@@ -15,6 +15,7 @@ import Button from "react-bootstrap/Button";
 import Link from "next/link";
 import {useGetLiveConfig, useAddCommand, useDeleteCommand, addCommandPathParamsType} from "@boostchicken/lol-api";
 
+
 interface CommandProps {
   toastText: Dispatch<SetStateAction<string>>;
 }
