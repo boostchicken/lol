@@ -8,12 +8,11 @@
   "exports": {
     ".": "./src/index.ts",
     "./clients/*.ts": "./src/clients/index.ts",
-    "./clients/swr/*.ts": "./src/clients/swr/index.ts",
     "./models/*.ts": "./src/models/index.ts"
   },
   "scripts": {
-    "build": "esbuild --bundle src/index.ts --outdir=dist  --sourcemap ",
-    "start": "esbuild  --watch ",
+    "build": "bun --bundle src/index.ts --outdir=dist  --sourcemap ",
+    "start": "bun  --watch ",
     "typecheck": "tsc ./src/index.ts --declaration --emitDeclarationOnly",
     "generate": "kubb generate"
   },
@@ -32,12 +31,13 @@
     "@kubb/swagger-client": "1.14.6",
     "@kubb/swagger-swr": "1.14.6",
     "@kubb/swagger-ts": "1.14.6",
+    "@redocly/cli": "^1.4.0",
     "axios": "^1.6.0",
     "swr": "^2.2.4",
     "typescript": "^5.2.2"
   },
   "devDependencies": {
-    "esbuild": "0.19.5",
-    "@kubb/cli": "^1.14.6"
+    "@kubb/cli": "^1.14.6",
+    "prettier": "3.0.3"
   }
 }

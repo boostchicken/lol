@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import type { SWRConfiguration, SWRResponse } from "swr";
 import client from "@kubb/swagger-client/client";
-import type { GetLiveConfigQueryResponse } from "../../models/GetLiveConfig";
+import type { GetLiveConfigQueryResponse } from "../models/GetLiveConfig";
 
 
 export function getLiveConfigQueryOptions <

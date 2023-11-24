@@ -1,4 +1,5 @@
 import './globals.css'
+import React from 'react'
 import type { Metadata} from 'next'
 import { Ubuntu_Mono } from 'next/font/google'
 
@@ -7,7 +8,6 @@ const font = Ubuntu_Mono({ weight: '400', preload: true, subsets: ['latin'] })
 export const metadata: Metadata = {
   manifest: "manifest.json",
   title: "BoostLoL",
-
   description: "Admin interface for BoostLoL"
 }
 export const viewport = {

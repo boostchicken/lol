@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import type { SWRConfiguration, SWRResponse } from "swr";
 import client from "@kubb/swagger-client/client";
-import type { GetHistoryQueryResponse } from "../../models/GetHistory";
+import type { GetHistoryQueryResponse } from "../models/GetHistory";
 
 
 export function getHistoryQueryOptions <

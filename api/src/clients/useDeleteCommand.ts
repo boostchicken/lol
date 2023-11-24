@@ -2,19 +2,17 @@ import useSWRMutation from "swr/mutation";
 import type { SWRMutationConfiguration, SWRMutationResponse } from "swr/mutation";
 import client from "@kubb/swagger-client/client";
 import type { ResponseConfig } from "@kubb/swagger-client/client";
-import type { AddCommandMutationResponse, AddCommandPathParams, AddCommandQueryParams } from "../../models/AddCommand";
+import type { DeleteCommandMutationResponse, DeleteCommandPathParams } from "../models/DeleteCommand";
 
 /**
- * @description Add a command to the config and reloads the cache. All strings will be trimmed, please URLEncode your url parameter.
-
- * @summary Add a command  to the config
- * @link /add/:command/:type
+ * @summary Delete a command from the config
+ * @link /delete/:command
  */
 
-export function useAddCommand <
-  TData = AddCommandMutationResponse, TError = unknown
+export function useDeleteCommand <
+  TData = DeleteCommandMutationResponse, TError = unknown
 >(
-  command: AddCommandPathParams["command"], type: AddCommandPathParams["type"], params?: AddCommandQueryParams, options?: {
+  command: DeleteCommandPathParams["command"], options?: {
           mutation?: SWRMutationConfiguration<ResponseConfig<TData>, TError, string | null, never>,
           client?: Partial<Parameters<typeof client<TData, TError>>[0]>,
           shouldFetch?: boolean,
@@ -22,15 +20,15 @@ export function useAddCommand <
 ): SWRMutationResponse<ResponseConfig<TData>, TError, string | null, never> {
   const { mutation: mutationOptions, client: clientOptions = {}, shouldFetch = true } = options ?? {};
   
-  const url = shouldFetch ? `/add/${command}/${type}` : null;
+  const url = shouldFetch ? `/delete/${command}` : null;
   return useSWRMutation<ResponseConfig<TData>, TError, string | null, never>(
     url,
     (url) => {
       return client<TData, TError>({
-        method: "put",
+        method: "delete",
         url,
         
-        params,
+        
         
         ...clientOptions,
       })

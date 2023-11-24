@@ -19,5 +19,5 @@ export default defineConfig({
   plugins: [
     createSwagger({ output: false }), 
     createSwaggerTS({ output: 'models', skipBy: skip }),
-    createSwaggerSWR({ output: './clients/swr', skipBy: skip })]
+    createSwaggerSWR({ output: './clients', skipBy: skip })]
 })

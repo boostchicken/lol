@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import type { SWRConfiguration, SWRResponse } from "swr";
 import client from "@kubb/swagger-client/client";
-import type { ExecuteLolQueryResponse, ExecuteLolQueryParams, ExecuteLol302, ExecuteLol404 } from "../../models/ExecuteLol";
+import type { ExecuteLolQueryResponse, ExecuteLolQueryParams, ExecuteLol302, ExecuteLol404 } from "../models/ExecuteLol";
 
 
 export function executeLolQueryOptions <
