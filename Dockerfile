@@ -1,32 +1,44 @@
+<<<<<<< HEAD
 
 FROM golang:1.21.5-alpine3.18 as builder
+=======
+FROM golang:1.21.4-alpine3.18 as server
+>>>>>>> 42f01fd095215329ca1c67fbfbfa69ef3a7e120c
 RUN mkdir -p /app
 WORKDIR /app
 
 COPY ./src/ /app
 RUN go work sync
 WORKDIR /app/cmd/lol
-RUN go mod tidy
-RUN go mod download 
+RUN go mod tidy && go mod download 
 WORKDIR /app/internal/config
-RUN go mod tidy
-RUN go mod download 
+RUN go mod tidy &&  go mod download 
 WORKDIR /app
 RUN go build -ldflags "-s -w" -o /app/lol ./cmd/lol/main.go 
 
+<<<<<<< HEAD
 FROM oven/bun AS nodejs
 RUN mkdir /app
 COPY ./ui/ /app/ui
 COPY  ./api /app/api
 WORKDIR /app/api
 RUN bun install && bun link .
+=======
+FROM oven/bun:alpine AS base
+ENV NODE_ENV=production
+RUN mkdir -p /app
+COPY ./ui/ /app/ui
+COPY  ./api /app/api
+WORKDIR /app/api
+RUN bun install && bun typecheck && bun link
+>>>>>>> 42f01fd095215329ca1c67fbfbfa69ef3a7e120c
 WORKDIR /app/ui
-RUN pnpm install && pnpm link /app/api && pnpm build
+RUN bun install && bun next build
 
 FROM alpine:3
 RUN mkdir /go
-COPY --from=builder /app/lol /go/boostchickenlol
-COPY --from=nodejs /app/ui/out /go/ui/out
+COPY --from=server /app/lol /go/boostchickenlol
+COPY --from=base /app/ui/out /go/ui/out
 WORKDIR /go
 
 LABEL org.opencontainers.image.maintainer="John Dorman <john@boostchicken.dev>"     
@@ -38,6 +50,6 @@ LABEL org.opencontainers.image.url="https://www.github.com/boostchicken/lol"
 LABEL org.opencontainers.image.source="https://www.github.com/boostchicken/lol"          
 LABEL org.opencontainers.image.documentation="https://www.github.com/boostchicken/lol/blob/main/README.md"
 LABEL org.opencontainers.image.description="bunnylol clone in go" 
-
+EXPOSE 8080 6969
 ENTRYPOINT [ "/go/boostchickenlol" ]
 CMD [ "bash"]
