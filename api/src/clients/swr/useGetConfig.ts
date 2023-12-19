@@ -1,38 +1,49 @@
 import useSWR from "swr";
-import type { SWRConfiguration, SWRResponse } from "swr";
 import client from "@kubb/swagger-client/client";
+import type { SWRConfiguration, SWRResponse } from "swr";
 import type { GetConfigQueryResponse } from "../../models/GetConfig";
 
+type GetConfigClient = typeof client<GetConfigQueryResponse, never, never>;
+type GetConfig = {
+  data: GetConfigQueryResponse;
+  error: never;
+  request: never;
+  pathParams: never;
+  queryParams: never;
+  headerParams: never;
+  response: GetConfigQueryResponse;
+  client: {
+    parameters: Partial<Parameters<GetConfigClient>[0]>;
+    return: Awaited<ReturnType<GetConfigClient>>;
+  };
+};
 export function getConfigQueryOptions<
-  TData = GetConfigQueryResponse,
-  TError = unknown,
+  TData extends GetConfig["response"] = GetConfig["response"],
+  TError = GetConfig["error"],
 >(
-  options: Partial<Parameters<typeof client>[0]> = {},
+  options: GetConfig["client"]["parameters"] = {},
 ): SWRConfiguration<TData, TError> {
   return {
-    fetcher: () => {
-      return client<TData, TError>({
+    fetcher: async () => {
+      const res = await client<TData, TError>({
         method: "get",
         url: `/config`,
-
         ...options,
-      }).then((res) => res.data);
+      });
+      return res.data;
     },
   };
 }
-
 /**
  * @summary Get the current config in your format of choice
  * @link /config
- * @deprecated
- */
-
+ * @deprecated */
 export function useGetConfig<
-  TData = GetConfigQueryResponse,
-  TError = unknown,
+  TData extends GetConfig["response"] = GetConfig["response"],
+  TError = GetConfig["error"],
 >(options?: {
   query?: SWRConfiguration<TData, TError>;
-  client?: Partial<Parameters<typeof client<TData, TError>>[0]>;
+  client?: GetConfig["client"]["parameters"];
   shouldFetch?: boolean;
 }): SWRResponse<TData, TError> {
   const {
@@ -40,12 +51,13 @@ export function useGetConfig<
     client: clientOptions = {},
     shouldFetch = true,
   } = options ?? {};
-
-  const url = shouldFetch ? `/config` : null;
-  const query = useSWR<TData, TError, string | null>(url, {
-    ...getConfigQueryOptions<TData, TError>(clientOptions),
-    ...queryOptions,
-  });
-
+  const url = `/config` as const;
+  const query = useSWR<TData, TError, typeof url | null>(
+    shouldFetch ? url : null,
+    {
+      ...getConfigQueryOptions<TData, TError>(clientOptions),
+      ...queryOptions,
+    },
+  );
   return query;
 }

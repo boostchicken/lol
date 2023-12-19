@@ -21,7 +21,7 @@ build: ui
 .PHONY:build
 
 debugui:
-	cd ui && pnpm dev
+	cd ui && bun run dev
 		
 doc: build
 	godoc

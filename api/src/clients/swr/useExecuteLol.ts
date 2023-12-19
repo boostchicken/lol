@@ -1,6 +1,6 @@
 import useSWR from "swr";
-import type { SWRConfiguration, SWRResponse } from "swr";
 import client from "@kubb/swagger-client/client";
+import type { SWRConfiguration, SWRResponse } from "swr";
 import type {
   ExecuteLolQueryResponse,
   ExecuteLolQueryParams,
@@ -8,42 +8,55 @@ import type {
   ExecuteLol404,
 } from "../../models/ExecuteLol";
 
+type ExecuteLolClient = typeof client<
+  ExecuteLolQueryResponse,
+  ExecuteLol302 | ExecuteLol404,
+  never
+>;
+type ExecuteLol = {
+  data: ExecuteLolQueryResponse;
+  error: ExecuteLol302 | ExecuteLol404;
+  request: never;
+  pathParams: never;
+  queryParams: ExecuteLolQueryParams;
+  headerParams: never;
+  response: ExecuteLolQueryResponse;
+  client: {
+    parameters: Partial<Parameters<ExecuteLolClient>[0]>;
+    return: Awaited<ReturnType<ExecuteLolClient>>;
+  };
+};
 export function executeLolQueryOptions<
-  TData = ExecuteLolQueryResponse,
-  TError = ExecuteLol302 | ExecuteLol404,
+  TData extends ExecuteLol["response"] = ExecuteLol["response"],
+  TError = ExecuteLol["error"],
 >(
-  params?: ExecuteLolQueryParams,
-  options: Partial<Parameters<typeof client>[0]> = {},
+  params?: ExecuteLol["queryParams"],
+  options: ExecuteLol["client"]["parameters"] = {},
 ): SWRConfiguration<TData, TError> {
   return {
-    fetcher: () => {
-      return client<TData, TError>({
+    fetcher: async () => {
+      const res = await client<TData, TError>({
         method: "get",
         url: `/lol`,
-
         params,
-
         ...options,
-      }).then((res) => res.data);
+      });
+      return res.data;
     },
   };
 }
-
 /**
  * @description The main entry point of LOL, this is where everything happens
-
  * @summary Redirect user based on the command provided
- * @link /lol
- */
-
+ * @link /lol */
 export function useExecuteLol<
-  TData = ExecuteLolQueryResponse,
-  TError = ExecuteLol302 | ExecuteLol404,
+  TData extends ExecuteLol["response"] = ExecuteLol["response"],
+  TError = ExecuteLol["error"],
 >(
-  params?: ExecuteLolQueryParams,
+  params?: ExecuteLol["queryParams"],
   options?: {
     query?: SWRConfiguration<TData, TError>;
-    client?: Partial<Parameters<typeof client<TData, TError>>[0]>;
+    client?: ExecuteLol["client"]["parameters"];
     shouldFetch?: boolean;
   },
 ): SWRResponse<TData, TError> {
@@ -52,12 +65,13 @@ export function useExecuteLol<
     client: clientOptions = {},
     shouldFetch = true,
   } = options ?? {};
-
-  const url = shouldFetch ? `/lol` : null;
-  const query = useSWR<TData, TError, string | null>(url, {
-    ...executeLolQueryOptions<TData, TError>(params, clientOptions),
-    ...queryOptions,
-  });
-
+  const url = `/lol` as const;
+  const query = useSWR<TData, TError, [typeof url, typeof params] | null>(
+    shouldFetch ? [url, params] : null,
+    {
+      ...executeLolQueryOptions<TData, TError>(params, clientOptions),
+      ...queryOptions,
+    },
+  );
   return query;
 }

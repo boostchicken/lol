@@ -15,7 +15,7 @@
     "build": "esbuild --bundle src/index.ts --outdir=dist  --sourcemap ",
     "start": "esbuild  --watch ",
     "typecheck": "tsc ./src/index.ts --declaration --emitDeclarationOnly",
-    "generate": "kubb generate"
+    "generate": "kubb generate --option ./kubb.config.js"
   },
   "repository": {
     "type": "git",
@@ -27,16 +27,17 @@
     "url": "https://github.com/boostchicken/lol/issues"
   },
   "dependencies": {
-    "@kubb/core": "1.11.6",
-    "@kubb/swagger": "1.11.6",
-    "@kubb/swagger-client": "1.11.6",
-    "@kubb/swagger-swr": "1.11.6",
-    "@kubb/swagger-ts": "1.11.6",
-    "axios": "^1.5.1",
+    "0h": "^0.20.2202664",
+    "@kubb/core": "2.0.6",
+    "@kubb/swagger": "2.0.6",
+    "@kubb/swagger-client": "2.0.6",
+    "@kubb/swagger-swr": "2.0.6",
+    "@kubb/swagger-ts": "2.0.6",
+    "axios": "^1.6.2",
     "swr": "^2.2.4",
     "typescript": "^5.2.2"
   },
   "devDependencies": {
-    "@kubb/cli": "^1.11.6"
+    "@kubb/cli": "^2.0.6"
   }
 }

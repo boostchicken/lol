@@ -18,6 +18,6 @@ export default defineConfig({
   },
   plugins: [
     createSwagger({ output: false }), 
-    createSwaggerTS({ output: 'models', skipBy: skip }),
-    createSwaggerSWR({ output: './clients/swr', skipBy: skip })]
+    createSwaggerTS({ output: { path: './models'}, skipBy: skip }),
+    createSwaggerSWR({ output: { path: './clients/swr'}, skipBy: skip })]
 })

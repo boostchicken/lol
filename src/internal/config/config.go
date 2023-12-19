@@ -41,8 +41,10 @@ type LOLEntry struct {
 
 // Config is the main config struct
 type Config struct {
-	Bind    string     // HTTP Bind address
-	Entries []LOLEntry // List of entries
+	Name        string     // Tenant Nanme
+	RequireAuth bool       // Require Auth?
+	Bind        string     // HTTP Bind address
+	Entries     []LOLEntry // List of entries
 }
 
 // CurrentConfig the current config loaded
@@ -51,6 +53,7 @@ var CurrentConfig Config
 var cache map[string]LOLEntry = make(map[string]LOLEntry)                       // A Map that caches LOLEntry BY Command
 var reflectionCache map[string]reflect.Method = make(map[string]reflect.Method) // Caches the Method associated with the Type
 
+// var db, dberr = gorm.Open(postgres.Open("test.db"), &gorm.Config{})
 // RehashConfig Reload the config but do not rebind
 func (c *Config) RehashConfig() {
 	configFile, err := os.ReadFile("config.yaml")

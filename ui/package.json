@@ -10,12 +10,12 @@
   },
   "dependencies": {
     "bootstrap": "^5.3.2",
-    "next": "13.5.5",
+    "next": "14.0.4",
     "react": "^18.2.0",
-    "react-bootstrap": "^2.9.0",
+    "react-bootstrap": "^2.9.1",
     "react-dom": "18.2.0",
     "sharp": "^0.32.6",
-    "swagger-ui-react": "^5.9.0",
+    "swagger-ui-react": "^5.10.5",
     "swr": "^2.2.4"
   },
   "devDependencies": {
@@ -25,6 +25,6 @@
     "@types/react-dom": "18.2.7",
     "eslint": "8.48.0",
     "eslint-config-next": "13.5.4",
-    "typescript": "5.2.2"
+    "typescript": "5.3.3"
   }
 }

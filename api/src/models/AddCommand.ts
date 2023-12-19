@@ -29,3 +29,8 @@ export type AddCommandQueryParams = {
  * @description Command Added
  */
 export type AddCommandMutationResponse = Config;
+export namespace AddCommandMutation {
+  export type Response = AddCommandMutationResponse;
+  export type PathParams = AddCommandPathParams;
+  export type QueryParams = AddCommandQueryParams;
+}

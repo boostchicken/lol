@@ -17,3 +17,8 @@ export type ExecuteLolQueryParams = {
 };
 
 export type ExecuteLolQueryResponse = any | null;
+export namespace ExecuteLolQuery {
+  export type Response = ExecuteLolQueryResponse;
+  export type QueryParams = ExecuteLolQueryParams;
+  export type Errors = ExecuteLol302 | ExecuteLol404;
+}
