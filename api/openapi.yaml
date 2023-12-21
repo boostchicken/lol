@@ -20,9 +20,7 @@ servers:
       hostname:
         # note! no enum here means it is an open value
         default: lol.yourdomain.io
-        description: your virtualhost that is running BoostLOL
       port:
-        description: "Your server port"
         default: '443'
       scheme:
         enum:
@@ -123,10 +121,11 @@ paths:
       summary: Delete a command from the config
       parameters:
         - name: command
-          required: false #// Can be false if you add a nul string command
+          required: true
+          allowEmptyValue: false
           in: path
           schema:
-            type: boolean
+            type: string
       operationId: "deleteCommand"
       tags:
         - "configuration"

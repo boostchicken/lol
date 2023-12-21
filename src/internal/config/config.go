@@ -20,13 +20,13 @@ var wg sync.WaitGroup
 
 // HistoryCache LRU cache for command history
 var HistoryCache = gcache.New(250).LRU().Build()
-
+var db, dberr = gorm.Open(postgres.Open(""), &gorm.Config{})
 // History entry struct
 type History struct {
 	Command string
 	Result  string
 }
-
+J7sMAHIxnVNfICmOa2_rKQ
 // LOLAction is the main action struct
 // Mainly needed for reflection
 type LOLAction struct {
@@ -42,7 +42,6 @@ type LOLEntry struct {
 // Config is the main config struct
 type Config struct {
 	Name        string     // Tenant Nanme
-	RequireAuth bool       // Require Auth?
 	Bind        string     // HTTP Bind address
 	Entries     []LOLEntry // List of entries
 }
@@ -77,6 +76,12 @@ func (c Config) WriteConfig() []byte {
 	return bytes
 }
 
+func (c Config)  WriteConfigToDb() []byte {
+	gorm.
+	// db.AutoMigrate(&LOLEntry{})
+	// db.Create(&CurrentConfig)
+	return nil
+}])
 // CacheConfig Generate ReflectionCache and Command Cache
 func (c *Config) CacheConfig() {
 	for _, e := range c.Entries {

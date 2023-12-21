@@ -1,4 +1,4 @@
-package main // import "github.com/boostchicken/cmd/lol"
+lspackage main // import "github.com/boostchicken/cmd/lol"
 
 import (
 	"errors"

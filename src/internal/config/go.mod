@@ -6,6 +6,8 @@ require (
 	github.com/bluele/gcache v0.0.2
 	github.com/gin-gonic/gin v1.9.1
 	gopkg.in/yaml.v3 v3.0.1
+	"gorm.io/driver/postgres" v1.0.6
+	"gorm.io/gorm" v1.21.12
 )
 
 require (

@@ -3,7 +3,7 @@ import createSwagger from '@kubb/swagger'
 import createSwaggerTS from '@kubb/swagger-ts'
 import createSwaggerSWR from '@kubb/swagger-swr'
 
-const skip = [{ pattern: "noclient", type: "tag" }];
+//const skip = [{ string: "noclient", type: "tag" }];
 export default defineConfig({
   root: '.',
   input: {
@@ -11,13 +11,13 @@ export default defineConfig({
   },
   output: {
     path: './src',
-    clean: true,
+
   },
   hooks: {
     done: ['prettier --write "**/*.{ts,tsx}"'],
   },
   plugins: [
     createSwagger({ output: false }), 
-    createSwaggerTS({ output: { path: './models'}, skipBy: skip }),
-    createSwaggerSWR({ output: { path: './clients/swr'}, skipBy: skip })]
+    createSwaggerTS({ output: { path: './models'}}),
+    createSwaggerSWR({ output: { path: './clients'}})]
 })

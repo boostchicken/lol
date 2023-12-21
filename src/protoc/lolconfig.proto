@@ -1,0 +1,74 @@
+syntax = "proto3";
+package boostlol;
+
+option go_package = "github.com/boostchicken/lol/pb";
+import "google/protobuf/empty.proto";
+
+message ExecuteLoLRequest {
+    string command = 1;
+}
+message ExecuteLoLResponse {
+    bool foundCommand = 1;
+    optional string commmand = 2;
+    optional string destinationUrl = 3;
+}
+message History {
+    string command = 1;
+    string result = 2;
+}
+message GetLiveConfigResponse {
+    string Tenant = 1;
+    optional string Bind = 2;
+    repeated LolEntry Entries = 3;
+}
+service Execute {
+    rpc LoL (ExecuteLoLRequest) returns (ExecuteLoLResponse) {}
+}
+service LiveConfig {
+    rpc GetLiveConfig(google.protobuf.Empty) returns (GetLiveConfigResponse) {}
+}
+
+service Command {
+    rpc AddCommand (AddCommandRequest) returns (AddCommandResponse) {}
+    rpc DeleteCommand (DeleteCommandRequest) returns (DeleteCommandResponse) {}
+    rpc GetCommands (google.protobuf.Empty) returns (GetCommandsResponse) {}
+}
+
+enum CommandType {
+    Alias = 0;
+    Redirect = 1;
+    RedirectVarargs = 2;
+}
+
+message LolEntry {
+    string command = 1;
+    CommandType commandType = 2;
+    string url = 3;
+}
+
+message AddCommandRequest {
+    string command = 1;
+    CommandType CommandType = 2;
+    string url = 3;
+}
+message AddCommandResponse {
+    bool success = 1;
+    string command = 2;
+    string url = 3;
+}
+
+message DeleteCommandRequest {
+    string command = 1;
+}
+message DeleteCommandResponse {
+    bool success = 1;
+    string command = 2;
+}
+
+message GetCommandsResponse {
+    repeated LolEntry entries = 1;
+}
+
+service HistoryChannel {
+    rpc HistoryPub(google.protobuf.Empty) returns (History) {}
+}

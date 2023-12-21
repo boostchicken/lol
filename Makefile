@@ -4,24 +4,21 @@ fmt:
 	go fmt ./src/cmd/lol/*.go
 	go fmt ./src/internal/config/*.go
 .PHONY:fmt
-
 lint: fmt
 	golangci-lint run src/cmd/lol/*.go
 	golangci-lint  run src/internal/config/*.go
 .PHONY:lint
-
 vet: fmt
 	cd ./src/cmd/lol && go vet main.go
 .PHONY:vet
 ui: vet
-	 cd ui && bun install && bunx --bun next build
+	cd api && pnpm link .  && cd ../ui && pnpm link @boostchicken/lol-api &&  pnpm run build
+.PHONY:ui
 build: ui
 	 cd ./src/cmd/lol/ && go build -ldflags="-s -w" -o ../../../bin/lol 
 .PHONY:build
-
 debugui:
-	cd ui &&  bun dev
-		
+	cd ui && pnpm dev
 doc: build
 	godoc
 .PHONY:doc
