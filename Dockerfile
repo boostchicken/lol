@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-
 FROM golang:1.21.5-alpine3.18 as builder
-=======
-FROM golang:1.21.4-alpine3.18 as server
->>>>>>> 42f01fd095215329ca1c67fbfbfa69ef3a7e120c
 RUN mkdir -p /app
 WORKDIR /app
 
@@ -16,24 +11,20 @@ RUN go mod tidy &&  go mod download
 WORKDIR /app
 RUN go build -ldflags "-s -w" -o /app/lol ./cmd/lol/main.go 
 
-<<<<<<< HEAD
-FROM oven/bun AS nodejs
+FROM node:20-slim AS nodejs
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable && corepack prepare pnpm@latest --activate
 RUN mkdir /app
 COPY ./ui/ /app/ui
 COPY  ./api /app/api
 WORKDIR /app/api
-RUN bun install && bun link .
-=======
-FROM oven/bun:alpine AS base
-ENV NODE_ENV=production
+RUN pnpm install && pnpm link .
 RUN mkdir -p /app
 COPY ./ui/ /app/ui
 COPY  ./api /app/api
 WORKDIR /app/api
-RUN bun install && bun typecheck && bun link
->>>>>>> 42f01fd095215329ca1c67fbfbfa69ef3a7e120c
 WORKDIR /app/ui
-RUN bun install && bun next build
 
 FROM alpine:3
 RUN mkdir /go

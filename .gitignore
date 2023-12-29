@@ -10,6 +10,7 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+out
 ./next
 ./next/cache
 # Dependency directories (remove the comment below to include it)
@@ -23,3 +24,4 @@ node_modules
 dist
 .pnpm-store
 .next
+.plasmo
