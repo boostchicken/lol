@@ -6,7 +6,7 @@ fmt:
 .PHONY:fmt
 
 lint: fmt
-	golangci-lint run src/cmd/lol/
+	golangci-lint run src/cmd/lol/*.go
 	golangci-lint  run src/internal/config/*.go
 .PHONY:lint
 
@@ -14,14 +14,14 @@ vet: fmt
 	cd ./src/cmd/lol && go vet main.go
 .PHONY:vet
 ui: vet
-	 cd ui && npm run build
+	 cd ui && pnpm build
 PHONY: ui
 build: ui
 	 cd ./src/cmd/lol/ && go build -ldflags="-s -w" -o ../../../bin/lol 
 .PHONY:build
 
 debugui:
-	cd ui && npm run start
+	cd ui && pnpm dev
 		
 doc: build
 	godoc

@@ -1,0 +1,12 @@
+@import '~bootstrap/dist/css/bootstrap.css';
+
+.Toast {
+  float: right;
+  z-index: auto;
+}
+
+a, a:hover, a:visited, a:active {
+  padding: 5px;
+  color: inherit;
+  text-decoration: none;
+ }
