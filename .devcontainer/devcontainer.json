@@ -17,12 +17,13 @@
       "installDockerBuildx": true
     },
     "ghcr.io/devcontainers-contrib/features/protoc:1.0.2": {
-       
+       "version":"v25.1"
     },
-    "ghcr.io/devcontainers-contrib/features/apt-get-packages": {
+    "ghcr.io/devcontainers-contrib/features/apt-packages:1": {
       "packages": [
-        "protoc-gen-gorm",
-        ]},
+        "protoc-gen-go-grpc"
+        ]
+    },
     "ghcr.io/devcontainers/features/github-cli:1": {}
   },
   "customizations": {
@@ -30,8 +31,7 @@
       "extensions": [
         "golang.go",
         "typescript.typescript-react-jsx",
-        "protocolbuffer.vscode-proto3",
-        "dbaeumer.vscode-eslint"
+        "protocolbuffer.vscode-proto3"
       ]
     }
   }
