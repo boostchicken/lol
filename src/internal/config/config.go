@@ -1,99 +1,65 @@
 package config //import "github.com/boostchicken/lol/config"
 
 import (
+	"context"
 	"fmt"
-	"io/fs"
 	"log"
 	"net/http"
-	"os"
 	"reflect"
 	"strings"
 	"sync"
 
-	"github.com/bluele/gcache"
+	"github.com/boostchicken/lol/model"
 	"github.com/gin-gonic/gin"
-	"gopkg.in/yaml.v3"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 var ops uint64
 var wg sync.WaitGroup
+var dsn string = "postgresql://lol-dev:ZcCkF5rm2__SwksA7-Y4ww@boost-lol-764.j77.cockroachlabs.cloud:26257/dev?sslmode=verify-full"
 
-// HistoryCache LRU cache for command history
-var HistoryCache = gcache.New(250).LRU().Build()
-var db, dberr = gorm.Open(postgres.Open(""), &gorm.Config{})
-// History entry struct
-type History struct {
-	Command string
-	Result  string
+var Db, err = gorm.Open(postgres.Open(dsn))
+
+
+func init() {
+
+	if err != nil {
+		log.Fatal("unable to connect to db", err)
+	}
 }
-J7sMAHIxnVNfICmOa2_rKQ
-// LOLAction is the main action struct
-// Mainly needed for reflection
+
 type LOLAction struct {
 }
 
-// LOLEntry Configuration entry
-type LOLEntry struct {
-	Command string // the first arguement of q delimited by spaces
-	Type    string // Any of the three types. RedirectVarArgs, Alias, Redirect
-	Value   string // the url to redirect to ex: https://www.google.com/search?q=%s
-}
-
-// Config is the main config struct
-type Config struct {
-	Name        string     // Tenant Nanme
-	Bind        string     // HTTP Bind address
-	Entries     []LOLEntry // List of entries
-}
-
 // CurrentConfig the current config loaded
-var CurrentConfig Config
+var CurrentConfig model.Config
 
-var cache map[string]LOLEntry = make(map[string]LOLEntry)                       // A Map that caches LOLEntry BY Command
+var cache map[string]*model.LolEntry = make(map[string]*model.LolEntry)         // A Map that caches LOLEntry BY Command
 var reflectionCache map[string]reflect.Method = make(map[string]reflect.Method) // Caches the Method associated with the Type
 
-// var db, dberr = gorm.Open(postgres.Open("test.db"), &gorm.Config{})
 // RehashConfig Reload the config but do not rebind
-func (c *Config) RehashConfig() {
-	configFile, err := os.ReadFile("config.yaml")
-	if err != nil {
-		log.Fatal("unable to read config", err)
-	}
-	err = yaml.Unmarshal(configFile, &CurrentConfig)
-	if err != nil {
-		log.Fatal("unable to read config", err)
-	}
-	c.CacheConfig()
+
+func CreateConfig(newConf *model.Config) (*model.Config, error) {
+	return model.DefaultCreateConfig(context.TODO(), newConf, *Db)
 }
 
-// WriteConfig write config to config.yaml
-func (c Config) WriteConfig() []byte {
-	bytes, err2 := yaml.Marshal(&CurrentConfig)
-	if err2 != nil {
-		log.Fatal("unable to write default config")
-	}
-	_ = os.WriteFile("config.yaml", bytes, fs.ModePerm)
-	return bytes
+func WriteConfig(conf *model.Config) (*model.Config, error) {
+	return model.DefaultStrictUpdateConfig(context.TODO(), conf, *Db)
 }
 
-func (c Config)  WriteConfigToDb() []byte {
-	gorm.
-	// db.AutoMigrate(&LOLEntry{})
-	// db.Create(&CurrentConfig)
-	return nil
-}])
 // CacheConfig Generate ReflectionCache and Command Cache
-func (c *Config) CacheConfig() {
+func CacheConfig(c model.Config) {
 	for _, e := range c.Entries {
-		cache[e.Command] = e
-		_, okm := reflectionCache[e.Type]
+		cache[e.GetCommand()] = e
+		_, okm := reflectionCache[e.GetType().String()]
 		if !okm {
 
-			method, okr := reflect.TypeOf(&LOLAction{}).MethodByName(e.Type)
+			method, okr := reflect.TypeOf(&LOLAction{}).MethodByName(e.GetType().String())
 			if !okr {
 				log.Fatalf("Unable to find function %s", e.Type)
 			}
-			reflectionCache[e.Type] = method
+			reflectionCache[e.GetType().String()] = method
 		}
 	}
 }
@@ -105,7 +71,7 @@ func (c *Config) CacheConfig() {
 func (t *LOLAction) Redirect(c *gin.Context, url string, parts []string) {
 	res := fmt.Sprintf(url, strings.Join(parts[1:], " "))
 	c.Redirect(http.StatusFound, res)
-	t.AddCommandHistory(res, c)
+	//model.HistoryCache.Set(ops, model.History{Command: c.Query("q"), Result: res})
 }
 
 // AddCommandHistory add command execution to history cache
@@ -113,7 +79,8 @@ func (t *LOLAction) AddCommandHistory(result string, c *gin.Context) {
 	wg.Add(1)
 	defer wg.Done()
 	ops++
-	_ = HistoryCache.Set(ops, History{Command: c.Query("q"), Result: result})
+	//history := model.History{Command: c.Query("q"), Result: result}
+
 }
 
 // Alias A static redirect
@@ -144,7 +111,7 @@ func (t *LOLAction) LOL(command string, c *gin.Context) {
 	entry, ok := cache[explode[0]]
 	if !ok {
 		if google, search := cache["g"]; search {
-			redir := fmt.Sprintf(google.Value, strings.Join(explode, " "))
+			redir := fmt.Sprintf(google.GetUrl(), strings.Join(explode, " "))
 			c.Redirect(http.StatusFound, redir)
 			t.AddCommandHistory(redir, c)
 			return
@@ -152,13 +119,13 @@ func (t *LOLAction) LOL(command string, c *gin.Context) {
 		_ = c.AbortWithError(http.StatusNotFound, fmt.Errorf("Unable to find cache entry for %s", explode[0]))
 	}
 
-	m, mok := reflectionCache[entry.Type]
+	m, mok := reflectionCache[entry.GetType().String()]
 	if !mok {
 		_ = c.AbortWithError(http.StatusNotFound, fmt.Errorf("unale to find reflection cache entry for %s", entry.Type))
 		return
 	}
 
-	if strings.Contains(entry.Type, "VarArgs") {
+	if strings.Contains(entry.GetType().String(), "VarArgs") {
 		vars := explode[1:]
 		var new = make([]interface{}, len(vars))
 		for i, v := range vars {
@@ -167,14 +134,14 @@ func (t *LOLAction) LOL(command string, c *gin.Context) {
 		m.Func.CallSlice([]reflect.Value{
 			reflect.ValueOf(t),
 			reflect.ValueOf(c),
-			reflect.ValueOf(strings.TrimSpace(entry.Value)),
+			reflect.ValueOf(strings.TrimSpace(entry.GetUrl())),
 			reflect.ValueOf(new),
 		})
 	} else {
 		m.Func.Call([]reflect.Value{
 			reflect.ValueOf(t),
 			reflect.ValueOf(c),
-			reflect.ValueOf(strings.TrimSpace(entry.Value)),
+			reflect.ValueOf(strings.TrimSpace(entry.GetUrl())),
 			reflect.ValueOf(explode[0:]),
 		})
 	}

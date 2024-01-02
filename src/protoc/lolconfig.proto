@@ -1,37 +1,33 @@
 syntax = "proto3";
 package boostlol;
 
-option go_package = "github.com/boostchicken/lol/pb";
+option go_package = "github.com/boostchicken/lol/model";
+
 import "google/protobuf/empty.proto";
+import "google/protobuf/descriptor.proto";
+import "gorm.proto";
 
 message ExecuteLoLRequest {
     string command = 1;
 }
 message ExecuteLoLResponse {
-    bool foundCommand = 1;
-    optional string commmand = 2;
-    optional string destinationUrl = 3;
+    bool success = 1;
+    string commmand = 2;
+    string url = 3;
 }
+
 message History {
+    option (gorm.opts) = {ormable: true};
     string command = 1;
     string result = 2;
 }
-message GetLiveConfigResponse {
-    string Tenant = 1;
-    optional string Bind = 2;
-    repeated LolEntry Entries = 3;
-}
-service Execute {
-    rpc LoL (ExecuteLoLRequest) returns (ExecuteLoLResponse) {}
-}
-service LiveConfig {
-    rpc GetLiveConfig(google.protobuf.Empty) returns (GetLiveConfigResponse) {}
-}
 
-service Command {
-    rpc AddCommand (AddCommandRequest) returns (AddCommandResponse) {}
-    rpc DeleteCommand (DeleteCommandRequest) returns (DeleteCommandResponse) {}
-    rpc GetCommands (google.protobuf.Empty) returns (GetCommandsResponse) {}
+message Config {
+    option (gorm.opts) = {ormable: true};
+    uint64 id = 1 [(gorm.field).tag = {type: "uint64" auto_increment: true primary_key: true}];
+    string Tenant = 2  [(gorm.field).tag = {type: "string" unique:true}];
+    string Bind = 3;
+    repeated LolEntry Entries = 4  [(gorm.field).has_many ={}];
 }
 
 enum CommandType {
@@ -41,8 +37,10 @@ enum CommandType {
 }
 
 message LolEntry {
+    
+    option (gorm.opts) = {ormable: true, table: "lol_commands"};
     string command = 1;
-    CommandType commandType = 2;
+    CommandType type = 2;
     string url = 3;
 }
 
@@ -69,6 +67,22 @@ message GetCommandsResponse {
     repeated LolEntry entries = 1;
 }
 
-service HistoryChannel {
-    rpc HistoryPub(google.protobuf.Empty) returns (History) {}
+message HistoryList {
+    repeated History history = 1;
+}
+service Execute {
+    option (gorm.server).autogen = true;
+    rpc LoL (ExecuteLoLRequest) returns (ExecuteLoLResponse) {}
+    rpc HistoryChan(google.protobuf.Empty) returns (HistoryList) {}
+}
+service Configuration {
+    option (gorm.server).autogen = true;
+    rpc GetLiveConfig(google.protobuf.Empty) returns (Config) {}
+}
+
+service Commands {
+    option (gorm.server).autogen = true;
+    rpc AddCommand (AddCommandRequest) returns (AddCommandResponse) {}
+    rpc DeleteCommand (DeleteCommandRequest) returns (DeleteCommandResponse) {}
+    rpc GetCommands (google.protobuf.Empty) returns (GetCommandsResponse) {}
 }

@@ -1,6 +1,7 @@
-lspackage main // import "github.com/boostchicken/cmd/lol"
+package main // import "github.com/boostchicken/cmd/lol"
 
 import (
+	"context"
 	"errors"
 	"log"
 	"net/http"
@@ -8,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/boostchicken/internal/config"
+	"github.com/boostchicken/lol/model"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
@@ -19,19 +21,19 @@ import (
 // Release: /app/lol will run in release mode
 // reads the file : config.yaml right next to the exe
 func main() {
-	configFile, err := os.ReadFile("config.yaml")
+	config.
 	if err != nil {
-		newConf := config.Config{
+		newConf := model.Config{
 			Bind: "0.0.0.0:8080",
-			Entries: []config.LOLEntry{
+			Entries: []*model.LolEntry{
 				{
 					Command: "g",
-					Type:    "Redirect",
-					Value:   "https://www.google.com/search?q=%s",
+					CommandType: model.CommandType_Redirect,
+					Url:   "https://www.google.com/search?q=%s",
 				},
 			},
 		}
-		configFile = newConf.WriteConfig()
+		model.DefaultCreateConfig(context.TODO(), &newConf, config.GetDb)
 	}
 
 	err3 := yaml.Unmarshal(configFile, &config.CurrentConfig)

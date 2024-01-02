@@ -14,7 +14,11 @@ vet: fmt
 ui: vet
 	cd api && pnpm link .  && cd ../ui && pnpm link @boostchicken/lol-api &&  pnpm run build
 .PHONY:ui
+protoc: 
+	protoc --go_out=src/model --go_opt=paths=source_relative --go-grpc_out=src/model --go-grpc_opt=paths=source_relative --gorm_out=src/model --gorm_opt=paths=source_relative --proto_path=src/protoc lolconfig.proto
+
 build: ui
+
 	 cd ./src/cmd/lol/ && go build -ldflags="-s -w" -o ../../../bin/lol 
 .PHONY:build
 debugui:

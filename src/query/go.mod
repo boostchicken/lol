@@ -1,4 +1,4 @@
-module github.com/boostchicken/lol/protoc
+module github.com/boostchicken/lol/query
 
 go 1.21
 
@@ -6,6 +6,7 @@ require (
 	gorm.io/driver/postgres v1.5.4
 	gorm.io/gen v0.3.24
 	gorm.io/gorm v1.25.5
+	gorm.io/plugin/dbresolver v1.5.0
 )
 
 require (
@@ -23,7 +24,6 @@ require (
 	gorm.io/datatypes v1.2.0 // indirect
 	gorm.io/driver/mysql v1.5.1-0.20230509030346-3715c134c25b // indirect
 	gorm.io/hints v1.1.2 // indirect
-	gorm.io/plugin/dbresolver v1.5.0 // indirect
 )
 
 replace github.com/boostchicken/lol/model => ../model
