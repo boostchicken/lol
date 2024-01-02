@@ -1,19 +1,15 @@
 {
-  "name": "boostlol-dev",
+  "name": "boostdev",
   "image": "mcr.microsoft.com/vscode/devcontainers/typescript-node:20",
   "features": {
     "ghcr.io/jungaretti/features/make:1": {},
-    "ghcr.io/devcontainers/features/go:1": {
-         "version": "latest"
-    },
-    "ghcr.io/lumenpink/devcontainer-features/bun:0": {},
+    "ghcr.io/devcontainers/features/go:1": {},
+    "ghcr.io/audacioustux/devcontainers/bun:1": {},
     "ghcr.io/devcontainers-contrib/features/pnpm:2.0.3": {},
     "ghcr.io/devcontainers/features/common-utils:2": {
       "configureZshAsDefaultShell": true
     },
-    "ghcr.io/devcontainers/features/docker-in-docker": {
-      "installDockerBuildx": true
-    },
+    "ghcr.io/devcontainers/features/docker-in-docker": {},
     "ghcr.io/devcontainers-contrib/features/protoc:1.0.2": {
        "version":"v25.1"
     },
@@ -21,8 +17,7 @@
       "packages": [
         "protoc-gen-go-grpc"
         ]
-    },
-    "ghcr.io/devcontainers-community/features/bazel:1.1": {},
+    },    
     "ghcr.io/devcontainers/features/github-cli:1": {}
   },
   "customizations": {
@@ -30,8 +25,7 @@
       "extensions": [
         "golang.go",
         "typescript.typescript-react-jsx",
-        "protocolbuffer.vscode-proto3",
-        "dbaeumer.vscode-eslint"
+        "protocolbuffer.vscode-proto3"
       ]
     }
   }

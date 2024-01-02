@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package gorm;
+package boostlol;
 
 option go_package = "github.com/boostchicken/lol/model";
 
