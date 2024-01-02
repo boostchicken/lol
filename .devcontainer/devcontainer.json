@@ -23,7 +23,7 @@
         ]
     },
     "ghcr.io/devcontainers-community/features/bazel:1.1": {},
-    "ghcr.io/devcontaines/features/github-cli:1": {}
+    "ghcr.io/devcontainers/features/github-cli:1": {}
   },
   "customizations": {
     "vscode": {
