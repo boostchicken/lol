@@ -22,8 +22,7 @@
         "protoc-gen-go-grpc"
         ]
     },
-    "ghcr.io/devcontainers-community/features/bazel:1.1": {},
-    "ghcr.io/devcontainers/features/github-cli:1": {}
+    "ghcr.io/devcontainers-community/features/bazel:1.1": {}
   },
   "customizations": {
     "vscode": {
