@@ -37,17 +37,19 @@ enum CommandType {
 }
 
 message LolEntry {
-    
     option (gorm.opts) = {ormable: true, table: "lol_commands"};
-    string command = 1;
-    CommandType type = 2;
-    string url = 3;
+    uint64 ConfigId = 1 [(gorm.field).tag = {type: "uint64"}];
+    Config config = 2 [(gorm.field).belongs_to = {foreignkey: "ConfigId"}];
+    string command = 3;
+    CommandType type = 4;
+    string url = 5;
+    
 }
 
 message AddCommandRequest {
     string command = 1;
     CommandType CommandType = 2;
-    string url = 3;
+    string url = 33;
 }
 message AddCommandResponse {
     bool success = 1;
@@ -70,18 +72,19 @@ message GetCommandsResponse {
 message HistoryList {
     repeated History history = 1;
 }
+
 service Execute {
-    option (gorm.server).autogen = true;
+  //  option (gorm.server).autogen = true;
     rpc LoL (ExecuteLoLRequest) returns (ExecuteLoLResponse) {}
-    rpc HistoryChan(google.protobuf.Empty) returns (HistoryList) {}
+    rpc HistoryChan(google.protobuf.Empty) returns ( HistoryList) {}
 }
 service Configuration {
-    option (gorm.server).autogen = true;
+  //  option (gorm.server).autogen = true;
     rpc GetLiveConfig(google.protobuf.Empty) returns (Config) {}
 }
 
 service Commands {
-    option (gorm.server).autogen = true;
+ //   option (gorm.server).autogen = true;
     rpc AddCommand (AddCommandRequest) returns (AddCommandResponse) {}
     rpc DeleteCommand (DeleteCommandRequest) returns (DeleteCommandResponse) {}
     rpc GetCommands (google.protobuf.Empty) returns (GetCommandsResponse) {}

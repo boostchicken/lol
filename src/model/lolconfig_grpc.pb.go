@@ -28,6 +28,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ExecuteClient interface {
+	// option (gorm.server).autogen = true;
 	LoL(ctx context.Context, in *ExecuteLoLRequest, opts ...grpc.CallOption) (*ExecuteLoLResponse, error)
 	HistoryChan(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*HistoryList, error)
 }
@@ -62,6 +63,7 @@ func (c *executeClient) HistoryChan(ctx context.Context, in *emptypb.Empty, opts
 // All implementations must embed UnimplementedExecuteServer
 // for forward compatibility
 type ExecuteServer interface {
+	// option (gorm.server).autogen = true;
 	LoL(context.Context, *ExecuteLoLRequest) (*ExecuteLoLResponse, error)
 	HistoryChan(context.Context, *emptypb.Empty) (*HistoryList, error)
 	mustEmbedUnimplementedExecuteServer()
@@ -154,6 +156,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ConfigurationClient interface {
+	// option (gorm.server).autogen = true;
 	GetLiveConfig(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config, error)
 }
 
@@ -178,6 +181,7 @@ func (c *configurationClient) GetLiveConfig(ctx context.Context, in *emptypb.Emp
 // All implementations must embed UnimplementedConfigurationServer
 // for forward compatibility
 type ConfigurationServer interface {
+	// option (gorm.server).autogen = true;
 	GetLiveConfig(context.Context, *emptypb.Empty) (*Config, error)
 	mustEmbedUnimplementedConfigurationServer()
 }
@@ -246,6 +250,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CommandsClient interface {
+	// option (gorm.server).autogen = true;
 	AddCommand(ctx context.Context, in *AddCommandRequest, opts ...grpc.CallOption) (*AddCommandResponse, error)
 	DeleteCommand(ctx context.Context, in *DeleteCommandRequest, opts ...grpc.CallOption) (*DeleteCommandResponse, error)
 	GetCommands(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetCommandsResponse, error)
@@ -290,6 +295,7 @@ func (c *commandsClient) GetCommands(ctx context.Context, in *emptypb.Empty, opt
 // All implementations must embed UnimplementedCommandsServer
 // for forward compatibility
 type CommandsServer interface {
+	// option (gorm.server).autogen = true;
 	AddCommand(context.Context, *AddCommandRequest) (*AddCommandResponse, error)
 	DeleteCommand(context.Context, *DeleteCommandRequest) (*DeleteCommandResponse, error)
 	GetCommands(context.Context, *emptypb.Empty) (*GetCommandsResponse, error)

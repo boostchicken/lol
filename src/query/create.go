@@ -19,5 +19,5 @@ func create() {
 	}
 	fmt.Println(db[len(db)-1].GetBind())
 	newConfig(Db).Create(conf)
-	newLolEntry(Db).Create(&model.LolEntry{ConfigId: conf.GetId(), Command: "g", Url: "https://www.google.com/q=%s", Type: model.CommandType_Redirect})
+	newLolEntry(Db).Create(&model.LolEntry{Config: conf, Command: "g", Url: "https://www.google.com/q=%s", Type: model.CommandType_Redirect})
 }

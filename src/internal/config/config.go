@@ -1,7 +1,6 @@
 package config //import "github.com/boostchicken/lol/config"
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -17,13 +16,11 @@ import (
 
 var ops uint64
 var wg sync.WaitGroup
-var dsn string = "postgresql://lol-dev:ZcCkF5rm2__SwksA7-Y4ww@boost-lol-764.j77.cockroachlabs.cloud:26257/dev?sslmode=verify-full"
-
-var Db, err = gorm.Open(postgres.Open(dsn))
-
+var Db *gorm.DB
 
 func init() {
-
+	var err error
+	Db, err = gorm.Open(postgres.Open("postgresql://lol-dev:ZcCkF5rm2__SwksA7-Y4ww@boost-lol-764.j77.cockroachlabs.cloud:26257/dev?sslmode=verify-full"))
 	if err != nil {
 		log.Fatal("unable to connect to db", err)
 	}
@@ -40,17 +37,9 @@ var reflectionCache map[string]reflect.Method = make(map[string]reflect.Method) 
 
 // RehashConfig Reload the config but do not rebind
 
-func CreateConfig(newConf *model.Config) (*model.Config, error) {
-	return model.DefaultCreateConfig(context.TODO(), newConf, *Db)
-}
-
-func WriteConfig(conf *model.Config) (*model.Config, error) {
-	return model.DefaultStrictUpdateConfig(context.TODO(), conf, *Db)
-}
-
 // CacheConfig Generate ReflectionCache and Command Cache
-func CacheConfig(c model.Config) {
-	for _, e := range c.Entries {
+func CacheConfig() {
+	for _, e := range CurrentConfig.Entries {
 		cache[e.GetCommand()] = e
 		_, okm := reflectionCache[e.GetType().String()]
 		if !okm {
@@ -97,7 +86,7 @@ func (t *LOLAction) Alias(c *gin.Context, url string, _ []string) {
 // c gin context
 // url the url as a string
 // a varargs for printf
-func (t *LOLAction) RedirectVarArgs(c *gin.Context, url string, a ...any) {
+func (t *LOLAction) RedirectVarargs(c *gin.Context, url string, a ...any) {
 	res := fmt.Sprintf(url, a...)
 	c.Redirect(http.StatusFound, res)
 	t.AddCommandHistory(res, c)
@@ -125,7 +114,7 @@ func (t *LOLAction) LOL(command string, c *gin.Context) {
 		return
 	}
 
-	if strings.Contains(entry.GetType().String(), "VarArgs") {
+	if strings.Contains(entry.GetType().String(), "Varargs") {
 		vars := explode[1:]
 		var new = make([]interface{}, len(vars))
 		for i, v := range vars {

@@ -10,40 +10,47 @@ import (
 
 	"github.com/boostchicken/internal/config"
 	"github.com/boostchicken/lol/model"
+	"github.com/boostchicken/lol/query"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
-	"golang.org/x/exp/maps"
-	"gopkg.in/yaml.v3"
 )
+
+var Q *query.Query
+
+func init() {
+	Q = query.Use(config.Db)
+}
 
 // Debug: /app/lol debug will run in debug mode
 // Release: /app/lol will run in release mode
 // reads the file : config.yaml right next to the exe
 func main() {
-	config.
-	if err != nil {
+	c := Q.Config
+	models, err := c.WithContext(context.Background()).Where(c.Tenant.Eq("dorman")).Find()
+	if err != nil && len(models) == 0 {
 		newConf := model.Config{
-			Bind: "0.0.0.0:8080",
+			Tenant: "dorman",
+			Bind:   "0.0.0.0:8080",
 			Entries: []*model.LolEntry{
 				{
 					Command: "g",
-					CommandType: model.CommandType_Redirect,
-					Url:   "https://www.google.com/search?q=%s",
+					Type:    model.CommandType_Redirect,
+					Url:     "https://www.google.com/search?q=%s",
 				},
 			},
 		}
-		model.DefaultCreateConfig(context.TODO(), &newConf, config.GetDb)
+		err2 := c.Create(&newConf)
+		if err2 != nil {
+			log.Fatal("unable to create config", err2)
+			os.Exit(1)
+		}
 	}
 
-	err3 := yaml.Unmarshal(configFile, &config.CurrentConfig)
-	if err3 != nil {
-		log.Fatal("unable to read config", err)
-	}
 	if len(config.CurrentConfig.Bind) == 0 {
 		config.CurrentConfig.Bind = "0.0.0.0:8080"
 	}
-	config.CurrentConfig.CacheConfig()
+	config.CacheConfig()
 	if len(os.Args) > 1 && os.Args[1] == "debug" {
 		gin.SetMode(gin.DebugMode)
 	} else {
@@ -70,13 +77,20 @@ func main() {
 // Delete a current entry
 // c gin.Context
 func DeleteCommand(c *gin.Context) {
+	l := Q.LolEntry
+	command, err := l.Where(l.ConfigId.Eq(config.CurrentConfig.Id), l.Command.Eq(c.Param("command"))).First()
+	if err != nil {
+		c.AbortWithError(500, err)
+	}
+	l.Delete(command)
+
 	for i, entry := range config.CurrentConfig.Entries {
 		if entry.Command == c.Param("command") {
 
 			config.CurrentConfig.Entries = append(config.CurrentConfig.Entries[:i], config.CurrentConfig.Entries[i+1:]...)
 
-			config.CurrentConfig.CacheConfig()
-			c.JSON(200, config.CurrentConfig)
+			config.CacheConfig()
+			c.JSON(200, &config.CurrentConfig)
 			return
 		}
 	}
@@ -86,21 +100,21 @@ func DeleteCommand(c *gin.Context) {
 // Renders current config based on Accept
 // c gin.Context
 func RenderConfig(c *gin.Context) {
-	_ = c.BindHeader(config.CurrentConfig)
+	c.ProtoBuf(200, &config.CurrentConfig)
 }
 
 // RenderConfigJSON HTTP: GET /liveconfig
 // Renders current config as JSON
 // c gin.Context
 func RenderConfigJSON(c *gin.Context) {
-	c.JSON(200, config.CurrentConfig)
+	c.JSON(200, &config.CurrentConfig)
 }
 
 // RenderHistory HTTP: GET /history
 // Renders current config as JSON
 // c gin.Context
 func RenderHistory(c *gin.Context) {
-	c.JSON(200, maps.Values(config.HistoryCache.GetALL(false)))
+	c.JSON(200, model.HistoryList{})
 }
 
 // AddCommand HTTP: PUT /add/:command/:type?url=github.com
@@ -108,23 +122,26 @@ func RenderHistory(c *gin.Context) {
 // Adds a new command and saves
 func AddCommand(c *gin.Context) {
 	typevar := c.Param("type")
+	var enumType model.CommandType
 	switch typevar {
 	case "Redirect":
-		break
-	case "RedirectVarArgs":
-		break
+		enumType = model.CommandType_Redirect
+	case "RedirectVarags":
+		enumType = model.CommandType_RedirectVarargs
 	case "Alias":
-		break
+		enumType = model.CommandType_Alias
 	default:
 		_ = c.AbortWithError(501, errors.New("invalid type"))
 	}
-	config.CurrentConfig.Entries = append(config.CurrentConfig.Entries, config.LOLEntry{
+	config.CurrentConfig.Entries = append(config.CurrentConfig.Entries, &model.LolEntry{
+		Config:  &config.CurrentConfig,
 		Command: strings.ToLower(strings.TrimSpace(c.Param("command"))),
-		Type:    typevar,
-		Value:   c.Query("url")})
-	config.CurrentConfig.WriteConfig()
-	config.CurrentConfig.CacheConfig()
-	c.JSON(200, config.CurrentConfig)
+		Type:    enumType,
+		Url:     c.Query("url")})
+
+	Q.LolEntry.Create(config.CurrentConfig.Entries...)
+	config.CacheConfig()
+	c.JSON(200, &config.CurrentConfig)
 }
 
 var t config.LOLAction = config.LOLAction{}

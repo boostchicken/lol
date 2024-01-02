@@ -11,9 +11,6 @@ import (
 type Querier interface {
 	// SELECT * FROM @@table WHERE command = @command
 	FilterWithCommand(command string) ([]gen.T, error)
-
-	// SELECT * FROM @@table WHERE tenant = @tenant
-	GetByTenant(tenant string) (*gen.T, error)
 }
 
 func main() {
@@ -25,13 +22,13 @@ func main() {
 	Db.AutoMigrate(&model.Config{})
 	g := gen.NewGenerator(gen.Config{
 		OutPath: "../query",
-		Mode:    gen.WithoutContext | gen.WithDefaultQuery | gen.WithQueryInterface, // generate mode
+		Mode:    gen.WithoutContext | gen.WithQueryInterface, // generate mode
 	})
 
 	g.UseDB(Db) // reuse your gorm db
 
 	g.ApplyBasic(model.Config{}, model.LolEntry{})
-	g.ApplyInterface(func(Querier) {},model.Config{}, model.LolEntry{})
+	g.ApplyInterface(func(Querier) {}, model.LolEntry{})
 
 	// Generate the code
 	g.Execute()
