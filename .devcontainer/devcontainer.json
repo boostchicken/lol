@@ -4,11 +4,9 @@
   "features": {
     "ghcr.io/jungaretti/features/make:1": {},
     "ghcr.io/devcontainers/features/go:1": {
-    
+         "version": "latest"
     },
-    "ghcr.io/audacioustux/devcontainers/bun:1": {
-      
-    },
+    "ghcr.io/lumenpink/devcontainer-features/bun:0": { },
     "ghcr.io/devcontainers-contrib/features/pnpm:2.0.3": {},
     "ghcr.io/devcontainers/features/common-utils:2": {
       "configureZshAsDefaultShell": true
@@ -24,7 +22,8 @@
         "protoc-gen-go-grpc"
         ]
     },
-    "ghcr.io/devcontainers/features/github-cli:1": {}
+    "ghcr.io/devcontainers-community/features/bazel:1.1": {},
+    "ghcr.io/devcontaines/features/github-cli:1": {}
   },
   "customizations": {
     "vscode": {
@@ -32,6 +31,7 @@
         "golang.go",
         "typescript.typescript-react-jsx",
         "protocolbuffer.vscode-proto3"
+        
       ]
     }
   }
