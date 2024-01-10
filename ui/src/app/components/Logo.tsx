@@ -1,5 +1,5 @@
 'use client';
-import Image from "next/image";
+import Image from  "react-bootstrap/Image"
 import boostchicken from "../boostchicken.svg";
 import rs7 from "../boostchicken.png";
 import { useRef, useEffect, useState } from "react";
@@ -18,7 +18,7 @@ const Logo = () => {
   
   return (
     <>
-      <Image className="logo" src={src.current} alt={title}  priority />
+      <Image className="logo" src={src.current.src} alt={title} />
     </>
   );
 };

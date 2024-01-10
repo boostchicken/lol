@@ -1,22 +1,20 @@
 {
   "name": "@boostchicken/lol-api",
-  "version": "2.0.0",
-  "description": "Genreated API fgor Boostchickens LOL clone",
+  "version": "2.3.0",
+  "description": "Genreated API for Boostchickens LOL clone",
   "main": "./src/index.ts",
   "type": "module",
   "types": "./src/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
     "./clients/*.ts": "./src/clients/index.ts",
-    "./clients/swr/*.ts": "./src/clients/swr/index.ts",
     "./models/*.ts": "./src/models/index.ts"
-    
   },
   "scripts": {
-    "build": "esbuild --bundle src/index.ts --outdir=dist  --sourcemap ",
-    "start": "esbuild  --watch ",
+    "build": "bun --bundle src/index.ts --outdir=dist  --sourcemap ",
+    "start": "bun  --watch ",
     "typecheck": "tsc ./src/index.ts --declaration --emitDeclarationOnly",
-    "generate": "kubb generate"
+    "generate": "kubb generate --option ./kubb.config.js"
   },
   "repository": {
     "type": "git",
@@ -28,15 +26,17 @@
     "url": "https://github.com/boostchicken/lol/issues"
   },
   "dependencies": {
-    "@kubb/core": "1.11.6",
-    "@kubb/swagger": "1.11.6",
-    "@kubb/swagger-swr": "1.11.6",
-    "@kubb/swagger-ts": "1.11.6",
-    "axios": "^1.6.0",
+    "@kubb/core": "1.14.9",
+    "@kubb/swagger": "1.14.9",
+    "@kubb/swagger-client": "1.14.9",
+    "@kubb/swagger-swr": "1.14.9",
+    "@kubb/swagger-ts": "1.14.9",
+    "axios": "^1.6.2",
     "swr": "^2.2.4",
-    "typescript": "^5.2.2"
+    "typescript": "^5.3.3"
   },
   "devDependencies": {
-    "@kubb/cli": "^1.11.6"
+    "@kubb/cli": "1.14.9",
+    "prettier": "3.0.3"
   }
 }

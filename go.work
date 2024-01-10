@@ -5,4 +5,7 @@ toolchain go1.21.0
 use (
 	src/cmd/lol
 	src/internal/config
+	src/model
+	src/protoc
+	src/query
 )
