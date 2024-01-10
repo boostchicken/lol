@@ -1,10 +1,9 @@
-go 1.21
-
-toolchain go1.21.0
+go 1.21.5
 
 use (
 	src/cmd/lol
 	src/internal/config
+	src/internal/sessions
 	src/model
 	src/protoc
 	src/query

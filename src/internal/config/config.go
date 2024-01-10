@@ -1,6 +1,7 @@
 package config //import "github.com/boostchicken/lol/config"
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -8,6 +9,9 @@ import (
 	"strings"
 	"sync"
 
+	aws "github.com/aws/aws-sdk-go-v2/aws"
+	awsconfig "github.com/aws/aws-sdk-go-v2/config"
+	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/boostchicken/lol/model"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/postgres"
@@ -17,10 +21,23 @@ import (
 var ops uint64
 var wg sync.WaitGroup
 var Db *gorm.DB
+var smClient *sm.Client
 
 func init() {
-	var err error
-	Db, err = gorm.Open(postgres.Open("postgresql://lol-dev:ZcCkF5rm2__SwksA7-Y4ww@boost-lol-764.j77.cockroachlabs.cloud:26257/dev?sslmode=verify-full"))
+
+	cfg, err := awsconfig.LoadDefaultConfig(context.TODO(), awsconfig.WithEndpointResolver(GetLocalhostAwsConfig()))
+	if err != nil {
+		log.Fatal("unable to load AWS config", err)
+	}
+
+	smClient = sm.NewFromConfig(cfg)
+
+	dsn, err := smClient.GetSecretValue(context.TODO(), &sm.GetSecretValueInput{SecretId: aws.String("boost-lol-dev")})
+
+	if err != nil {
+		log.Fatal("unable to connect to db", err)
+	}
+	Db, err = gorm.Open(postgres.Open(aws.String(dsn.SecretString)))
 	if err != nil {
 		log.Fatal("unable to connect to db", err)
 	}
@@ -134,5 +151,11 @@ func (t *LOLAction) LOL(command string, c *gin.Context) {
 			reflect.ValueOf(explode[0:]),
 		})
 	}
+}
 
+func GetLocalhostAwsConfig() aws.EndpointResolverWithOptions {
+	customResolver := aws.EndpointResolverWithOptions(func(service string, region string, options ...interface{}) (aws.Endpoint, error) {
+		return aws.Endpoint{URL: "https://localhost.localstack.cloud:4566", SigningRegion: "us-west-2"}, nil
+	})
+	return customResolver
 }
