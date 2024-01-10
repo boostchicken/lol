@@ -8,12 +8,6 @@
     "start": "next start",
     "lint": "next lint"
   },
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
   "dependencies": {
     "@boostchicken/lol-api": "link:@boostchicken/lol-api",
     "bootstrap": "^5.3.2",
