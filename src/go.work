@@ -2,4 +2,10 @@ go 1.21
 
 use ./cmd/lol/
 
-use ./internal/config/
+use ./protoc/
+
+use (
+	./internal/config/
+	./model
+	./query
+)
