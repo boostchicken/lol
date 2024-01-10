@@ -43,7 +43,6 @@ func main() {
 		err2 := c.Create(&newConf)
 		if err2 != nil {
 			log.Fatal("unable to create config", err2)
-			os.Exit(1)
 		}
 	}
 
@@ -69,7 +68,6 @@ func main() {
 	err4 := r.Run(config.CurrentConfig.Bind)
 	if err4 != nil && err4 != http.ErrServerClosed {
 		log.Fatal("unable to start server", err4)
-		os.Exit(1)
 	}
 }
 
