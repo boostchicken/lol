@@ -1,6 +1,4 @@
 FROM golang:1.21.6-alpine3.18 as builder
-
-FROM golang:1.21.6-alpine3.18 as builder
 RUN mkdir -p /app
 WORKDIR /app
 
