@@ -1,20 +1,32 @@
-openapi: '3.0.3'
+openapi: '3.1.0'
+security: []
 info:
-  title: BoostchickenLOL
-  description: A bunnyLoL clone that is feature rich and light weight.
-  version: '5.0.0'
-  contact:
-    name: "John D."
-    url: "https://www.boostchicken.io"
-    email: john@boostchicken.dev
-  license:
-    name: MIT License
-  
+    version: 5.0.0
+    title: BoostLOL
+    description: A bunnyLoL clone that is feature rich and light weight.
+    contact:
+      name: "John D."
+      url: "https://www.boostchicken.dev"
+      email: john@boostchicken.dev
+    license:
+      name: MIT License
+      url: https://opensource.org/license/mit/
 servers:
   - url: https://lol.boostchicken.io
-  - url: http://localhost:6969
-  - url: http://localhost:8080
-
+    description: Main Server
+  - url: '{scheme}://{hostname}:{port}'
+    description: Custom Server
+    variables:
+      hostname:
+        # note! no enum here means it is an open value
+        default: lol.yourdomain.io
+      port:
+        default: '443'
+      scheme:
+        enum:
+          - 'http'
+          - 'https'
+        default: 'https'
 components:
   schemas:
     config:
@@ -29,7 +41,7 @@ components:
           description: The host and port to bind too (eg 0.0.0.0:8080)
           type: string
         Entries:
-          title: LOLCommands
+          title: CommandList
           description: "Array of all current commands"
           required:
             - "Command"
@@ -37,7 +49,7 @@ components:
             - "Type"
           type: array
           items:
-            title: Command
+            title: CommandSpec
             properties:
               Command:
                 type: string
@@ -47,6 +59,7 @@ components:
                 description: A string following golang printf format for the URL to goto
               Type:
                 type: string
+                default: 'Alias'
                 enum:
                 - Alias
                 - Redirect
@@ -66,29 +79,10 @@ components:
             type: string
             format: url 
 paths:
-  /config:
-    summary: Get the current config in your format of choice
-    get:
-      operationId: getConfig
-      deprecated: true
-      tags:
-        - "configuration"
-        - "noclient"
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/config"
-            application/xml:
-              schema:
-                $ref: "#/components/schemas/config"
-            application/yaml:
-              schema:
-                $ref: "#/components/schemas/config"
   /history:
     get:
+      description: |- 
+        Your history
       summary: Get all history tab entries (max 250)
       operationId: getHistory
       tags:
@@ -100,77 +94,94 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/history"
+        '404':
+            description: "Impossible this URL is forever"   
   /liveconfig:
     get:
       summary: 'Get current configuration in JSON for UI'
-      description: "liveconfig has the same return value of config with a contentype of JSON.  However this just exists to make that fool proof"
+      description: "Returns a JSON formatted server config"
       operationId: getLiveConfig
       tags:
         - "configuration"
-        - "ui"
       responses:
         '200':
-          description: OK
+          description: Config rendered
           content:
             application/json:
-              schema:
+              schema: 
                 $ref: "#/components/schemas/config"
+        '404':
+          description: "command not found"
+          content:
+            text/html:
+              schema: 
+                type: string
   /delete/{command}:
     delete:
       summary: Delete a command from the config
       parameters:
         - name: command
           required: true
+          allowEmptyValue: false
           in: path
           schema:
             type: string
       operationId: "deleteCommand"
       tags:
         - "configuration"
-        - "ui"
       responses:
         '200':
-          description: "Command Deleted"
+          description: "command deleted"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/config"
+        '404':
+          description: "command not found"
+          content:
+            text/html:
+              example: "not found"
   /add/{command}/{type}:
     put:
-      summary: Add a command  to the config
+      summary: Add a command to the config
       description: >
         Add a command to the config and reloads the cache. All strings will be trimmed, please URLEncode your url parameter.
       parameters:
         - name: command
           required: true
           in: path
+          allowEmptyValue: false
           schema:
             type: string
         - name: type
+          allowEmptyValue: false
           required: true
           in: path
           schema:
             type: string
+            default: Alias
             enum:
-               - Alias
-               - Redirect
-               - RedirectVarArgs
+              - Alias
+              - Redirect
+              - RedirectVarArgs
         - name: url
           in: query
           required: true
+          allowEmptyValue: false
           schema:
             type: string
       operationId: addCommand
       tags:
         - "configuration"
-        - "ui"
       responses:
+        '401':
+          description: Strop trying to break me
         '200':
           description: "Command Added"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/config"  
+                $ref: "#/components/schemas/config" 
   /lol:
     get:
       summary: Redirect user based on the command provided
@@ -178,17 +189,61 @@ paths:
        The main entry point of LOL, this is where everything happens
       parameters:
         - name: q
-          description: This is your LOL query (eg github boostchicken lol)
+          description: URLEscaped LOL query (eg github boostchicken lol)
           in: query
+          allowEmptyValue: false
           required: true
           schema:
             type: string
       operationId: executeLol
       tags:
         - "execute"
-        - "noclient"
       responses:
-        '404':
-          description: Command not found
+        '401':
+          description: Strop trying to break me
+        '200':
+          description: You confused boostLol
+        '501':
+          description: "Unable to find command"
         '302':
-          description: Command found and redirecting you to your destination
+          description: "Redirect to your the parsed URL"
+          headers: 
+            Location:
+              schema: 
+                type: string
+
+  /lol/{command}:
+    get:
+      summary: Redirect user based on the command provided. Command provided as a 2nd URL segment
+      description: > 
+       The main entry point of LOL, this is where everything happens with URL paths instead of query strings.  This allows the users more flexibility as query strings are notoriously painful
+      parameters:
+        - name: command
+          description: URLEscaped LOL query (eg github boostchicken lol)
+          in: path
+          required: true
+          allowEmptyValue: false
+          schema:
+            type: string
+      operationId: executeLolByPath
+      tags:
+        - "execute"
+      responses:
+        '401':
+          description: Strop trying to break me
+        '200':
+          description: You confused boostLol
+        '501':
+          description: "Unable to find command"
+          content: 
+            application/json:
+              schema: 
+                type: object
+        '302':
+          description: "Redirect to your the parsed URL"
+          headers: 
+            Location:
+              schema: 
+                
+                type: string
+

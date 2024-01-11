@@ -4,19 +4,20 @@ import {
   Dispatch,
   SetStateAction,
   useEffect
-
 } from "react";
+import * as React from 'react';
 import Table from "react-bootstrap/Table";
 import Badge from "react-bootstrap/Badge";
-import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Button from "react-bootstrap/Button";
 import Link from "next/link";
 import {useGetLiveConfig, useAddCommand, useDeleteCommand, addCommandPathParamsType} from "@boostchicken/lol-api";
 
+
 interface CommandProps {
   toastText: Dispatch<SetStateAction<string>>;
+  children?: React.ReactNode;
 }
 
 function Commands(props: CommandProps) {
@@ -75,9 +76,9 @@ function Commands(props: CommandProps) {
   if (error) return <div>Error</div>;
 
   return (
-    <Container>
+    <div>
       <h3 className="input-group-text" style={{display: 'block'}}>
-        Commands <Badge bg="danger"> {conf?.Entries?.length} </Badge>
+        Commands <Badge bg='danger'> {conf?.Entries?.length} </Badge>
         <Link href="/api">
           <Button variant="danger">API Docs</Button>
         </Link>
@@ -152,7 +153,8 @@ function Commands(props: CommandProps) {
             ))}
           </tbody>
         </Table>
-    </Container>
+    </div>
+
   );
 }
 
