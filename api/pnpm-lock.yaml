@@ -9,14 +9,14 @@ dependencies:
     specifier: 1.14.9
     version: 1.14.9
   '@kubb/swagger':
-    specifier: 1.11.6
-    version: 1.11.6(@kubb/react@1.11.6)(openapi-types@12.1.3)
+    specifier: 1.14.9
+    version: 1.14.9(openapi-types@12.1.3)
   '@kubb/swagger-swr':
     specifier: 1.11.6
-    version: 1.11.6(@kubb/react@1.11.6)(axios@1.6.0)(openapi-types@12.1.3)(typescript@5.2.2)
+    version: 1.11.6(axios@1.6.0)(openapi-types@12.1.3)(typescript@5.2.2)
   '@kubb/swagger-ts':
     specifier: 1.11.6
-    version: 1.11.6(@kubb/react@1.11.6)(openapi-types@12.1.3)(typescript@5.2.2)
+    version: 1.11.6(openapi-types@12.1.3)(typescript@5.2.2)
   axios:
     specifier: ^1.6.0
     version: 1.6.0
@@ -194,15 +194,7 @@ packages:
       typescript: 5.2.2
     dev: false
 
-  /@kubb/react@1.11.6:
-    resolution: {integrity: sha512-o99jXdosOKTKTWxzHFuh3w1XY4fRrYzo9ZGeTjZ+v2oYDJ+GppAhZQsTczh1/KLinKRZzvp5Rtz3d1nknTwu0A==}
-    engines: {node: '>=18', pnpm: '>=8.3.0'}
-    dependencies:
-      '@kubb/core': 1.11.6
-      '@kubb/parser': 1.11.6
-    dev: false
-
-  /@kubb/swagger-client@1.11.6(@kubb/react@1.11.6)(axios@1.6.0)(openapi-types@12.1.3)(typescript@5.2.2):
+  /@kubb/swagger-client@1.11.6(axios@1.6.0)(openapi-types@12.1.3)(typescript@5.2.2):
     resolution: {integrity: sha512-xT2Ynr+i3vtvMhWZVRHgnB8kpaFiO0ClaeVbessn6ORB5Omm6uc+tFv8/Z6NChrC90BQphoYOgcPZnGBlJ6SOg==}
     engines: {node: '>=18', pnpm: '>=8.3.0'}
     peerDependencies:
@@ -214,9 +206,8 @@ packages:
     dependencies:
       '@kubb/core': 1.11.6
       '@kubb/parser': 1.11.6
-      '@kubb/react': 1.11.6
-      '@kubb/swagger': 1.11.6(@kubb/react@1.11.6)(openapi-types@12.1.3)
-      '@kubb/swagger-ts': 1.11.6(@kubb/react@1.11.6)(openapi-types@12.1.3)(typescript@5.2.2)
+      '@kubb/swagger': 1.11.6(openapi-types@12.1.3)
+      '@kubb/swagger-ts': 1.11.6(openapi-types@12.1.3)(typescript@5.2.2)
       axios: 1.6.0
       change-case: 4.1.2
     transitivePeerDependencies:
@@ -225,15 +216,15 @@ packages:
       - typescript
     dev: false
 
-  /@kubb/swagger-swr@1.11.6(@kubb/react@1.11.6)(axios@1.6.0)(openapi-types@12.1.3)(typescript@5.2.2):
+  /@kubb/swagger-swr@1.11.6(axios@1.6.0)(openapi-types@12.1.3)(typescript@5.2.2):
     resolution: {integrity: sha512-FaJiaMg5am2fd/lWFQuW1XH35ttmw7uYHjVmLEe7oUth4Ee5uQ6FlVmKSoSeBZpgGrZvj/91EIiNol1QgJvrGA==}
     engines: {node: '>=18', pnpm: '>=8.3.0'}
     dependencies:
       '@kubb/core': 1.11.6
       '@kubb/parser': 1.11.6
-      '@kubb/swagger': 1.11.6(@kubb/react@1.11.6)(openapi-types@12.1.3)
-      '@kubb/swagger-client': 1.11.6(@kubb/react@1.11.6)(axios@1.6.0)(openapi-types@12.1.3)(typescript@5.2.2)
-      '@kubb/swagger-ts': 1.11.6(@kubb/react@1.11.6)(openapi-types@12.1.3)(typescript@5.2.2)
+      '@kubb/swagger': 1.11.6(openapi-types@12.1.3)
+      '@kubb/swagger-client': 1.11.6(axios@1.6.0)(openapi-types@12.1.3)(typescript@5.2.2)
+      '@kubb/swagger-ts': 1.11.6(openapi-types@12.1.3)(typescript@5.2.2)
       change-case: 4.1.2
     transitivePeerDependencies:
       - '@kubb/react'
@@ -243,7 +234,7 @@ packages:
       - typescript
     dev: false
 
-  /@kubb/swagger-ts@1.11.6(@kubb/react@1.11.6)(openapi-types@12.1.3)(typescript@5.2.2):
+  /@kubb/swagger-ts@1.11.6(openapi-types@12.1.3)(typescript@5.2.2):
     resolution: {integrity: sha512-p8BiIbZESml5gCmYeg7wilUlgojTE+zsqn1YQvUk5BKGY2WomnQlNys7/nfNxceR9HtRBcUod9+hmJm6ASZobQ==}
     engines: {node: '>=18', pnpm: '>=8.3.0'}
     peerDependencies:
@@ -251,7 +242,7 @@ packages:
     dependencies:
       '@kubb/core': 1.11.6
       '@kubb/parser': 1.11.6
-      '@kubb/swagger': 1.11.6(@kubb/react@1.11.6)(openapi-types@12.1.3)
+      '@kubb/swagger': 1.11.6(openapi-types@12.1.3)
       change-case: 4.1.2
       typescript: 5.2.2
     transitivePeerDependencies:
@@ -260,7 +251,7 @@ packages:
       - openapi-types
     dev: false
 
-  /@kubb/swagger@1.11.6(@kubb/react@1.11.6)(openapi-types@12.1.3):
+  /@kubb/swagger@1.11.6(openapi-types@12.1.3):
     resolution: {integrity: sha512-ylsdcRIH3CvtlCtlA1nAdK2O9z/6/iC9ISEaUhUyDz2MLBtOnHSE2Zek+a19TaHaQER0Vd9QlhshN0L5ZSOdnQ==}
     engines: {node: '>=18', pnpm: '>=8.3.0'}
     peerDependencies:
@@ -268,9 +259,26 @@ packages:
     dependencies:
       '@apidevtools/swagger-parser': 10.1.0(openapi-types@12.1.3)
       '@kubb/core': 1.11.6
-      '@kubb/react': 1.11.6
       change-case: 4.1.2
       oas: 23.0.1
+      oas-normalize: 11.0.1
+      swagger2openapi: 7.0.8
+    transitivePeerDependencies:
+      - encoding
+      - openapi-types
+    dev: false
+
+  /@kubb/swagger@1.14.9(openapi-types@12.1.3):
+    resolution: {integrity: sha512-WnE7jKtRyguiTqCWWz+zN9KzpMJD8zF1FvAM+AGT/4/ADIRSvJxkoXUXnxva8rvZ/uSWhJ4MOh/FK3W+3N8I9w==}
+    engines: {node: '>=18', pnpm: '>=8.3.0'}
+    peerDependencies:
+      '@kubb/react': 1.14.9
+    dependencies:
+      '@apidevtools/swagger-parser': 10.1.0(openapi-types@12.1.3)
+      '@kubb/core': 1.14.9
+      change-case: 4.1.2
+      js-yaml: 4.1.0
+      oas: 23.0.0
       oas-normalize: 11.0.1
       swagger2openapi: 7.0.8
     transitivePeerDependencies:
@@ -1380,6 +1388,24 @@ packages:
       yaml: 1.10.2
     dev: false
 
+  /oas@23.0.0:
+    resolution: {integrity: sha512-e3G5pdnuw/hFSVtnNmVwDQHr29j3SG6KaL6C6QjfKVnbLqwRWQ+5gHx7Ky5ABxxGtQ17jZLjXl4f/vX9IMgUbg==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@readme/json-schema-ref-parser': 1.2.0
+      '@types/json-schema': 7.0.13
+      json-schema-merge-allof: 0.8.1
+      jsonpath-plus: 7.2.0
+      jsonpointer: 5.0.1
+      memoizee: 0.4.15
+      oas-normalize: 11.0.1
+      openapi-types: 12.1.3
+      path-to-regexp: 6.2.1
+      remove-undefined-objects: 4.0.2
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
   /oas@23.0.1:
     resolution: {integrity: sha512-R3mcbr90nFQQLHSbrGCZYF5ufFo8rIYvkW7JG7VGLzjMA9SuQhAzyzgw0A/+pvg4kR01HJZfb24ts+/y/HoYsQ==}
     engines: {node: '>=18'}
@@ -1561,6 +1587,11 @@ packages:
 
   /regenerator-runtime@0.14.0:
     resolution: {integrity: sha512-srw17NI0TUWHuGa5CFGGmhfNIeja30WMBfbslPNhf6JrqQlLN5gcrvig1oqPxiVaXb0oW0XRKtH6Nngs5lKCIA==}
+    dev: false
+
+  /remove-undefined-objects@4.0.2:
+    resolution: {integrity: sha512-6Nh52HADM60lhewwWU30ujMzTjYJk4M5q/LhRYLAacP0hTbzjVWiBVlV84U5RsQA4wDKLwkL0r0qJvti2hRLeQ==}
+    engines: {node: '>=16'}
     dev: false
 
   /remove-undefined-objects@5.0.0:
