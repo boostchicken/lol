@@ -7,30 +7,32 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/boostchicken/lol/model"
 	"github.com/gin-gonic/gin"
 )
 
 func Test_RedirectVarArgs(t *testing.T) {
 	tests := []struct {
 		name   string
-		config Config
+		config model.Config
 		action LOLAction
 	}{{
-		"RedirectVarArgs",
-		Config{
-			Bind: "0.0.0.0:6969",
-			Entries: []LOLEntry{
+		name: "RedirectVarargs",
+		config: model.Config{
+			Tenant: "boost",
+			Bind:   "0.0.0.0:6969",
+			Entries: []*model.LolEntry{
 				{
 					Command: "github",
-					Type:    "RedirectVarArgs",
-					Value:   "https://www.github.com/%s/%s",
+					Type:    model.CommandType_Redirect,
+					Url:     "https://www.github.com/%s/%s",
 				}},
 		},
-		LOLAction{},
+		action: LOLAction{},
 	}}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var c Config = tt.config
+			var c model.Config = tt.config
 			gin.SetMode(gin.TestMode)
 
 			w := httptest.NewRecorder()
@@ -39,7 +41,8 @@ func Test_RedirectVarArgs(t *testing.T) {
 			request.RequestURI = url
 			ctx, _ := gin.CreateTestContext(w)
 			ctx.Request = request
-			c.CacheConfig()
+			CurrentConfig = c
+			CacheConfig()
 			tt.action.LOL("github boostchicken lol", ctx)
 			log.Println(w.Result())
 		})
