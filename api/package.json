@@ -28,7 +28,7 @@
     "url": "https://github.com/boostchicken/lol/issues"
   },
   "dependencies": {
-    "@kubb/core": "1.11.6",
+    "@kubb/core": "1.14.9",
     "@kubb/swagger": "1.11.6",
     "@kubb/swagger-swr": "1.11.6",
     "@kubb/swagger-ts": "1.11.6",
