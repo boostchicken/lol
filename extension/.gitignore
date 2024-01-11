@@ -42,3 +42,5 @@ keys.json
 
 # typescript
 .tsbuildinfo
+
+.next

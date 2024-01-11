@@ -8,11 +8,10 @@ A clone of Meta's bunnylol service written in go.
 4. Config auto generation, only ned tyo change if you want to run on a different port than 8080
    
 ## Roadmap
-1. Move away from CRA (probably to Next.js or Remix)
-2. Passkey Auth
-3. Kube support, Multi Tenancy via k8s
-4. Helm chart
-5. Swagger API / Spec for client generation
+1. Passkey Auth
+2. Kube support, Multi Tenancy via k8s
+3. Helm chart
+
    
 ### Usage
 1. Deploy the docker container and expose the port you configured 
