@@ -6,9 +6,7 @@ import "./SwaggerDark.css"
 function Api() {
   return (
     <SwaggerUI
-      tryItOutEnabled={true}
-      requestSnippetsEnabled={true}
-      url="./openapi.yaml"
+      tryItOutEnabled={true} requestSnippetsEnabled={true} url="./openapi.yaml"
     />
   );
 }

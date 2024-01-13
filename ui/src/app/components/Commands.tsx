@@ -12,8 +12,8 @@ import Form from "react-bootstrap/Form";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Button from "react-bootstrap/Button";
 import Link from "next/link";
-import {useGetLiveConfig, useAddCommand, useDeleteCommand, addCommandPathParamsType} from "@boostchicken/lol-api";
-
+import {useGetLiveConfig, useAddCommand,
+   useDeleteCommand, addCommandPathParamsType } from "../../../../api";
 
 interface CommandProps {
   toastText: Dispatch<SetStateAction<string>>;

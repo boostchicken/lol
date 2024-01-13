@@ -1,32 +1,28 @@
-syntax = "proto3";
-package boostlol;
-
-option go_package = "github.com/boostchicken/lol/model";
-
+import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/descriptor.proto";
 import "gorm.proto";
 
 message ExecuteLoLRequest {
-    string command = 1;
+    required string command = 1;
 }
 message ExecuteLoLResponse {
-    bool success = 1;
-    string commmand = 2;
-    string url = 3;
+   required bool success = 1;
+    optional string commmand = 2;
+   optional string url = 3;
 }
 
 message History {
     option (gorm.opts) = {ormable: true};
-    string command = 1;
-    string result = 2;
+    required string command = 1;
+    required string result = 2;
 }
 
 message Config {
-    option (gorm.opts) = {ormable: true};
-    uint64 id = 1 [(gorm.field).tag = {type: "uint64" auto_increment: true primary_key: true}];
-    string Tenant = 2  [(gorm.field).tag = {type: "string" unique:true}];
-    string Bind = 3;
+   option (gorm.opts) = {ormable: true};
+   required uint64 id = 1 [(gorm.field).tag = {type: "uint64" auto_increment: true primary_key: true}];
+   required string Tenant = 2  [(gorm.field).tag = {type: "string" unique:true}];
+   required string Bind = 3;
     repeated LolEntry Entries = 4  [(gorm.field).has_many ={}];
 }
 
@@ -38,31 +34,31 @@ enum CommandType {
 
 message LolEntry {
     option (gorm.opts) = {ormable: true, table: "lol_commands"};
-    uint64 ConfigId = 1 [(gorm.field).tag = {type: "uint64"}];
-    Config config = 2 [(gorm.field).belongs_to = {foreignkey: "ConfigId"}];
-    string command = 3;
-    CommandType type = 4;
-    string url = 5;
+   required  uint64 ConfigId = 1 [(gorm.field).tag = {type: "uint64"}];
+    required Config config = 2 [(gorm.field).belongs_to = {foreignkey: "ConfigId"}];
+   required string command = 3;
+    required CommandType type = 4;
+    required string url = 5;
     
 }
 
 message AddCommandRequest {
-    string command = 1;
-    CommandType CommandType = 2;
-    string url = 33;
+    required string command = 1;
+    optional CommandType CommandType = 2;
+    required string url = 33;
 }
 message AddCommandResponse {
-    bool success = 1;
-    string command = 2;
-    string url = 3;
+    required bool success = 1;
+    optional string command = 2;
+    optional string url = 3;
 }
 
 message DeleteCommandRequest {
-    string command = 1;
+    required string command = 1;
 }
 message DeleteCommandResponse {
-    bool success = 1;
-    string command = 2;
+   required bool success = 1;
+    optional string command = 2;
 }
 
 message GetCommandsResponse {
@@ -75,17 +71,37 @@ message HistoryList {
 
 service Execute {
   //  option (gorm.server).autogen = true;
-    rpc LoL (ExecuteLoLRequest) returns (ExecuteLoLResponse) {}
+    rpc LoL (ExecuteLoLRequest) returns (ExecuteLoLResponse) {
+        option google.api.http = {
+            get: "/lol?command={command}"
+        };
+    }
     rpc HistoryChan(google.protobuf.Empty) returns ( HistoryList) {}
 }
 service Configuration {
   //  option (gorm.server).autogen = true;
-    rpc GetLiveConfig(google.protobuf.Empty) returns (Config) {}
+    rpc GetLiveConfig(google.protobuf.Empty) returns (Config) {
+        option google.api.http = {
+            get: "/config"
+        };
+    }
 }
 
 service Commands {
  //   option (gorm.server).autogen = true;
-    rpc AddCommand (AddCommandRequest) returns (AddCommandResponse) {}
-    rpc DeleteCommand (DeleteCommandRequest) returns (DeleteCommandResponse) {}
-    rpc GetCommands (google.protobuf.Empty) returns (GetCommandsResponse) {}
+    rpc AddCommand (AddCommandRequest) returns (AddCommandResponse) {
+        option google.api.http = {
+            put: "/add/type?url={url}"
+        };
+    }
+    rpc DeleteCommand (DeleteCommandRequest) returns (DeleteCommandResponse) {
+        option google.api.http = {
+            delete: "/{command}"
+        };
+    }
+    rpc GetCommands (google.protobuf.Empty) returns (GetCommandsResponse) {
+        option google.api.http = {
+            get: "/commands"
+        };
+    }
 }

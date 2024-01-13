@@ -10,13 +10,14 @@ export function getConfigQueryOptions<
   options: Partial<Parameters<typeof client>[0]> = {},
 ): SWRConfiguration<TData, TError> {
   return {
-    fetcher: () => {
-      return client<TData, TError>({
+    fetcher: async () => {
+      const res = await client<TData, TError>({
         method: "get",
         url: `/config`,
 
         ...options,
-      }).then((res) => res.data);
+      });
+      return res.data;
     },
   };
 }

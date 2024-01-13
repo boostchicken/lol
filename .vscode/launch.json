@@ -19,10 +19,10 @@
         },
         {
             "name": "Launch Backend",
-            "type": "go",
+            "type": "node",
             "request": "launch",
-            "mode": "auto",
-            "cwd": "${workspaceFolder}/",
+            // Remove the "mode" property
+            "cwd": "${workspaceFolder}/api",
             "program": "${workspaceFolder}/src/cmd/lol"
         }
     ]

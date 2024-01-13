@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import type { SWRConfiguration, SWRResponse } from "swr";
 import client from "@kubb/swagger-client/client";
-import type { GetHistoryQueryResponse } from "../../models/GetHistory";
+import type { GetHistoryQueryResponse } from "@boostchicken/lol-api"
 
 export function getHistoryQueryOptions<
   TData = GetHistoryQueryResponse,
@@ -10,7 +10,7 @@ export function getHistoryQueryOptions<
   options: Partial<Parameters<typeof client>[0]> = {},
 ): SWRConfiguration<TData, TError> {
   return {
-    fetcher: () => {
+    fetcher: async () => {
       return client<TData, TError>({
         method: "get",
         url: `/history`,

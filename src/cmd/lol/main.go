@@ -19,7 +19,7 @@ import (
 var Q *query.Query
 
 func init() {
-	Q = query.Use(config.Db)
+	Q = query.Use(lolconf.GetDb())
 }
 
 // Debug: /app/lol debug will run in debug mode
@@ -44,10 +44,9 @@ func main() {
 		if err2 != nil {
 			log.Fatal("unable to create config", err2)
 		}
-	}
 
 	if len(config.CurrentConfig.Bind) == 0 {
-		config.CurrentConfig.Bind = "0.0.0.0:8080"
+		*config.CurrentConfig.Bind = "0.0.0.0:8080"
 	}
 	config.CacheConfig()
 	if len(os.Args) > 1 && os.Args[1] == "debug" {
@@ -63,7 +62,7 @@ func main() {
 	r.GET("/lol", Invoke).GET("/history", RenderHistory)
 	r.PUT("/add/:command/:type", AddCommand).DELETE("/delete/:command", DeleteCommand)
 
-	log.Println("Listening on", config.CurrentConfig.Bind)
+
 
 	err4 := r.Run(config.CurrentConfig.Bind)
 	if err4 != nil && err4 != http.ErrServerClosed {
@@ -79,6 +78,7 @@ func DeleteCommand(c *gin.Context) {
 	command, err := l.Where(l.ConfigId.Eq(config.CurrentConfig.Id), l.Command.Eq(c.Param("command"))).First()
 	if err != nil {
 		c.AbortWithError(500, err)
+		return
 	}
 	l.Delete(command)
 
@@ -88,10 +88,11 @@ func DeleteCommand(c *gin.Context) {
 			config.CurrentConfig.Entries = append(config.CurrentConfig.Entries[:i], config.CurrentConfig.Entries[i+1:]...)
 
 			config.CacheConfig()
-			c.JSON(200, &config.CurrentConfig)
-			return
+		
 		}
 	}
+	c.JSON(200, &config.CurrentConfig)
+	
 }
 
 // RenderConfig HTTP: GET /config

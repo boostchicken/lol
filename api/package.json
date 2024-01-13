@@ -1,6 +1,6 @@
 {
   "name": "@boostchicken/lol-api",
-  "version": "2.3.0",
+  "version": "3.0.0",
   "description": "Genreated API for Boostchickens LOL clone",
   "main": "./src/index.ts",
   "type": "module",
@@ -14,7 +14,8 @@
     "build": "bun --bundle src/index.ts --outdir=dist  --sourcemap ",
     "start": "bun  --watch ",
     "typecheck": "tsc ./src/index.ts --declaration --emitDeclarationOnly",
-    "generate": "kubb generate --option ./kubb.config.js"
+    "generate": "kubb generate --option ./kubb.config.js",
+    "backend": "kubb generate --option ./kubb.backend.js"
   },
   "repository": {
     "type": "git",
@@ -31,12 +32,13 @@
     "@kubb/swagger-client": "1.14.9",
     "@kubb/swagger-swr": "1.14.9",
     "@kubb/swagger-ts": "1.14.9",
-    "axios": "^1.6.2",
+    "axios": "^1.6.5",
     "swr": "^2.2.4",
     "typescript": "^5.3.3"
   },
   "devDependencies": {
     "@kubb/cli": "1.14.9",
-    "prettier": "3.0.3"
+    "prettier": "3.1.1",
+    "@cloudflare/workers-types": "4.20231218.0"
   }
 }

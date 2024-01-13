@@ -16,15 +16,16 @@ export function executeLolQueryOptions<
   options: Partial<Parameters<typeof client>[0]> = {},
 ): SWRConfiguration<TData, TError> {
   return {
-    fetcher: () => {
-      return client<TData, TError>({
+    fetcher: async () => {
+      const res = await client<TData, TError>({
         method: "get",
         url: `/lol`,
 
         params,
 
         ...options,
-      }).then((res) => res.data);
+      });
+      return res.data;
     },
   };
 }

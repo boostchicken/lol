@@ -2,7 +2,7 @@
 import Table from "react-bootstrap/Table";
 import Badge from "react-bootstrap/Badge";
 import Container from "react-bootstrap/Container";
-import {useGetHistory} from "@boostchicken/lol-api";
+import {useGetHistory }from "../../../../api";
 
 function History() {
   const { data: history } = useGetHistory();

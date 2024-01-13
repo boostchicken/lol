@@ -43,7 +43,7 @@ function App() {
           <Commands toastText={setToastText} />
         </Suspense>
         <Suspense fallback={<Spinner animation="border" variant="primary" />}>
-        <History />
+           <History />
         </Suspense>
       </div>
     </>

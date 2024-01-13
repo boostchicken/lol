@@ -12,10 +12,11 @@ import (
 )
 
 func Test_RedirectVarArgs(t *testing.T) {
+
 	tests := []struct {
 		name   string
 		config model.Config
-		action LOLAction
+		action model.LOLAction
 	}{{
 		name: "RedirectVarargs",
 		config: model.Config{
@@ -41,7 +42,7 @@ func Test_RedirectVarArgs(t *testing.T) {
 			request.RequestURI = url
 			ctx, _ := gin.CreateTestContext(w)
 			ctx.Request = request
-			CurrentConfig = c
+			CurrentConfig := c
 			CacheConfig()
 			tt.action.LOL("github boostchicken lol", ctx)
 			log.Println(w.Result())

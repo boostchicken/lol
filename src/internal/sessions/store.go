@@ -7,7 +7,7 @@ import (
 )
 
 type SessionManager struct {
-    store *sessions.Store
+    store sessions.Store
 }
 
 func NewSessionManager(secretKey string) *SessionManager {
@@ -30,5 +30,5 @@ func (sm *SessionManager) CreateSession(w http.ResponseWriter, r *http.Request, 
 }
 
 func (sm *SessionManager) GetSession(r *http.Request, name string) (*sessions.Session, error) {
-    return sm.store.Get(r, name)
+	return sm.store.Get(r, name)
 }
