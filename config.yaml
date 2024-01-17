@@ -1,8 +1,0 @@
-bind: :6969
-entries:
-    - command: po
-      type: RedirectVarArgs
-      value: sdg
-    - command: g
-      type: Redirect
-      value: https://google.com/search?q=%s

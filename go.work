@@ -1,10 +1,10 @@
 go 1.21.6
 
 use (
-	src/cmd/lol
-	src/internal/config
-	src/internal/sessions
+	src/clients/secrets
+	src/cmd
+	src/config
 	src/model
-	src/protoc
 	src/query
+	src/sessionstore
 )

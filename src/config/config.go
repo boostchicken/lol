@@ -1,7 +1,6 @@
 package config //import "github.com/boostchicken/lol/config"
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -9,12 +8,8 @@ import (
 	"strings"
 	"sync"
 
-	aws "github.com/aws/aws-sdk-go-v2/aws"
-	awsconfig "github.com/aws/aws-sdk-go-v2/config"
-	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/boostchicken/lol/model"
 	"github.com/gin-gonic/gin"
-	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -22,27 +17,6 @@ var ops uint64
 var wg sync.WaitGroup
 var Db *gorm.DB
 var err error
-
-func init() {
-
-	configapi, err := awsconfig.LoadDefaultConfig(context.TODO(), reflect.Func(&awsconfig.LoadOptions{EndpointResolverWithOptionsFunc: aws.GetLocalhostAWSConfig("us-east-2")})
-	if err != nil {
-		c.AbortWithError(501, err )
-	}
-
-	smClient := sm.NewFromConfig(configapi)
-
-	output, err := smClient.GetSecretValue(context.TODO(), &sm.GetSecretValueInput{SecretId: aws.String("boost-lol-dev")})
-
-	if err != nil {
-		c.AbortWithError(501, err )
-	}
-
-	Db, err = gorm.Open(postgres.Open(aws.ToString(output.dsn.SecretString)))
-	if err != nil {
-		c.AbortWithError(501, err )
-	}
-}
 
 type LOLAction struct {
 }
@@ -152,8 +126,4 @@ func (t *LOLAction) LOL(command string, c *gin.Context) {
 			reflect.ValueOf(explode[0:]),
 		})
 	}
-}
-
-func GetLocalhostAwsConfig(region string) (aws.Endpoint) {
-	return aws.Endpoint{URL: "https://localhost.localstack.cloud:4566", SigningRegion: region, Source: aws.EndpointSourceCustom}
 }

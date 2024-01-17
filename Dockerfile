@@ -6,10 +6,10 @@ COPY ./src/ /app
 RUN go work sync
 WORKDIR /app/cmd/lol
 RUN go mod tidy && go mod download 
-WORKDIR /app/internal/config
+WORKDIR /app/config
 RUN go mod tidy &&  go mod download 
 WORKDIR /app
-RUN go build -ldflags "-s -w" -o /app/lol ./cmd/lol/main.go 
+RUN go build -ldflags "-s -w" -o /app/lol ./cmd/main.go 
 
 FROM node:20-slim AS nodejs
 ENV PNPM_HOME="/pnpm"
@@ -19,17 +19,16 @@ RUN mkdir /app
 COPY ./ui/ /app/ui
 COPY  ./api /app/api
 WORKDIR /app/api
-RUN pnpm install && pnpm link .
 RUN mkdir -p /app
 COPY ./ui/ /app/ui
 COPY  ./api /app/api
-WORKDIR /app/api
 WORKDIR /app/ui
+RUN pnpm link ../api && pnpm install && pnpm build
 
 FROM alpine:3
 RUN mkdir /go
-COPY --from=server /app/lol /go/boostchickenlol
-COPY --from=base /app/ui/out /go/ui/out
+COPY --from=builder /app/lol /go/boostlol
+COPY --from=nodejs /app/ui/out /go/ui/out
 WORKDIR /go
 
 LABEL org.opencontainers.image.maintainer="John Dorman <john@boostchicken.dev>"     
@@ -42,5 +41,5 @@ LABEL org.opencontainers.image.source="https://www.github.com/boostchicken/lol"
 LABEL org.opencontainers.image.documentation="https://www.github.com/boostchicken/lol/blob/main/README.md"
 LABEL org.opencontainers.image.description="bunnylol clone in go" 
 EXPOSE 8080 6969
-ENTRYPOINT [ "/go/boostchickenlol" ]
+ENTRYPOINT [ "/go/boostlol" ]
 CMD [ "bash"]

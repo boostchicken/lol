@@ -7,7 +7,7 @@ settings:
 dependencies:
   '@boostchicken/lol-api':
     specifier: link:@boostchicken/lol-api
-    version: link:@boostchicken/lol-api
+    version: link:../api
   '@corbado/webcomponent':
     specifier: ^1.0.104
     version: 1.0.104

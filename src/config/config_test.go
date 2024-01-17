@@ -16,7 +16,7 @@ func Test_RedirectVarArgs(t *testing.T) {
 	tests := []struct {
 		name   string
 		config model.Config
-		action model.LOLAction
+		action LOLAction
 	}{{
 		name: "RedirectVarargs",
 		config: model.Config{
@@ -33,7 +33,6 @@ func Test_RedirectVarArgs(t *testing.T) {
 	}}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var c model.Config = tt.config
 			gin.SetMode(gin.TestMode)
 
 			w := httptest.NewRecorder()
@@ -42,7 +41,7 @@ func Test_RedirectVarArgs(t *testing.T) {
 			request.RequestURI = url
 			ctx, _ := gin.CreateTestContext(w)
 			ctx.Request = request
-			CurrentConfig := c
+			CurrentConfig = tt.config
 			CacheConfig()
 			tt.action.LOL("github boostchicken lol", ctx)
 			log.Println(w.Result())

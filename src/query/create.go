@@ -3,21 +3,28 @@ package query
 import (
 	"fmt"
 
+	"github.com/boostchicken/lol/clients/secrets"
 	"github.com/boostchicken/lol/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func create() {
-	var dsn string = "postgresql://lol-dev:ZcCkF5rm2__SwksA7-Y4ww@boost-lol-764.j77.cockroachlabs.cloud:26257/dev?sslmode=verify-full"
-	var Db, _ = gorm.Open(postgres.Open(dsn))
+
+	dsn, err := secrets.GetDSN()
+	if err != nil {
+		panic(err)
+	}
+	db, err2 := gorm.Open(postgres.Open(*dsn))
+	if err2 != nil {
+		panic(err2)
+	}
 	conf := &model.Config{Tenant: "dorman", Bind: "0.0.0.0:6969"}
 	c := Config.Where(Config.Bind.Neq("1"))
-	db, err := c.Find()
-	if err != nil {
-		fmt.Println(err.Error())
+	dbq, err3 := c.Find()
+	if err3 != nil {
+		fmt.Println(err3.Error())
 	}
-	fmt.Println(db[len(db)-1].GetBind())
-	newConfig(Db).Create(conf)
-	newLolEntry(Db).Create(&model.LolEntry{Config: conf, Command: "g", Url: "https://www.google.com/q=%s", Type: model.CommandType_Redirect})
+	fmt.Println(dbq[len(dbq)-1].GetBind())
+	newLolEntry(db).Create(&model.LolEntry{Config: conf, Command: "gx", Url: "https://www.google.com/q=%s", Type: model.CommandType_Redirect})
 }

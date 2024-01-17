@@ -1,4 +1,4 @@
-package main // import "github.com/boostchicken/cmd/lol"
+package lol // import "github.com/boostchicken/cmd/lol"
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/boostchicken/internal/config"
+	"github.com/boostchicken/lol/config"
 	"github.com/boostchicken/lol/model"
 	"github.com/boostchicken/lol/query"
 	"github.com/gin-contrib/cors"
@@ -18,14 +18,8 @@ import (
 
 var Q *query.Query
 
-func init() {
-	Q = query.Use(lolconf.GetDb())
-}
-
-// Debug: /app/lol debug will run in debug mode
-// Release: /app/lol will run in release mode
-// reads the file : config.yaml right next to the exe
 func main() {
+	Q = query.Use(config.Db)
 	c := Q.Config
 	models, err := c.WithContext(context.Background()).Where(c.Tenant.Eq("dorman")).Find()
 	if err != nil && len(models) == 0 {
@@ -44,9 +38,10 @@ func main() {
 		if err2 != nil {
 			log.Fatal("unable to create config", err2)
 		}
+	}
 
 	if len(config.CurrentConfig.Bind) == 0 {
-		*config.CurrentConfig.Bind = "0.0.0.0:8080"
+		config.CurrentConfig.Bind = "0.0.0.0:8080"
 	}
 	config.CacheConfig()
 	if len(os.Args) > 1 && os.Args[1] == "debug" {
@@ -56,18 +51,25 @@ func main() {
 	}
 	fs := static.LocalFile("./ui/out/", true)
 	r := gin.Default()
-	r.Use(cors.Default(), static.Serve("/api", fs), static.Serve("/", fs))
+	v1 := r.Group("/v1")
+	docs := r.Group("/docs")
+	r.Use(cors.Default(), docs.static.Serve("/api", fs), static.Serve("/", fs))
 
-	r.GET("/config", RenderConfig).GET("/liveconfig", RenderConfigJSON)
-	r.GET("/lol", Invoke).GET("/history", RenderHistory)
-	r.PUT("/add/:command/:type", AddCommand).DELETE("/delete/:command", DeleteCommand)
-
-
+	v1.GET("/config", RenderConfig).GET("/liveconfig", RenderConfigJSON).GET("/lol", Invoke).GET("/history", RenderHistory)
+	v1.PUT("/add/:command/:type", AddCommand)
+	v1.DELETE("/delete/:command", DeleteCommand)
+	v1.POST("/auth/webhook", AuthWebhook)
 
 	err4 := r.Run(config.CurrentConfig.Bind)
 	if err4 != nil && err4 != http.ErrServerClosed {
 		log.Fatal("unable to start server", err4)
 	}
+}
+
+// AuthWebhook HTTP: POST /auth/webhook
+// c gin.Context
+func AuthWebhook(c *gin.Context) AuthWebhookResponse {
+	c.ProtoBuf(200, &AuthWebhookResponse{id: 1, data: {}})
 }
 
 // DeleteCommand HTTP: GET /config
@@ -78,21 +80,18 @@ func DeleteCommand(c *gin.Context) {
 	command, err := l.Where(l.ConfigId.Eq(config.CurrentConfig.Id), l.Command.Eq(c.Param("command"))).First()
 	if err != nil {
 		c.AbortWithError(500, err)
-		return
 	}
 	l.Delete(command)
 
 	for i, entry := range config.CurrentConfig.Entries {
 		if entry.Command == c.Param("command") {
-
 			config.CurrentConfig.Entries = append(config.CurrentConfig.Entries[:i], config.CurrentConfig.Entries[i+1:]...)
-
 			config.CacheConfig()
-		
+			break
 		}
 	}
 	c.JSON(200, &config.CurrentConfig)
-	
+
 }
 
 // RenderConfig HTTP: GET /config
@@ -142,8 +141,6 @@ func AddCommand(c *gin.Context) {
 	config.CacheConfig()
 	c.JSON(200, &config.CurrentConfig)
 }
-
-var t config.LOLAction = config.LOLAction{}
 
 // Invoke HTTP: GET /lol?q=github boostchicken lol
 // c gin.Context
