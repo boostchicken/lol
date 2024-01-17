@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package boostlol;
+package gorm;
 
-option go_package = "github.com/boostchicken/lol/model";
+option go_package = "github.com/infobloxopen/protoc-gen-gorm/options;gorm";
 
 import "google/protobuf/descriptor.proto";
 

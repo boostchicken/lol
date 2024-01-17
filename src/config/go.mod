@@ -4,6 +4,8 @@ go 1.21.6
 
 require (
 	github.com/boostchicken/lol/model v0.0.0-00010101000000-000000000000
+	github.com/boostchicken/lol/query v0.0.0-00010101000000-000000000000
+	github.com/boostchicken/cmd/lol v0.0.0-00010101000000-000000000000
 	github.com/gin-gonic/gin v1.9.1
 	gorm.io/gorm v1.25.5
 
@@ -49,7 +51,7 @@ require (
 	golang.org/x/sys v0.16.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/tools v0.17.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240108191215-35c7eff3a6b1 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240116215550-a9fa1716bcac // indirect
 	google.golang.org/grpc v1.60.1 // indirect
 	google.golang.org/protobuf v1.32.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
@@ -65,4 +67,5 @@ require (
 replace (
 	github.com/boostchicken/lol/model => ../model
 	github.com/boostchicken/lol/query => ../query
+	github.com/boostchicken/cmd/lol => ../cmd/lol
 )

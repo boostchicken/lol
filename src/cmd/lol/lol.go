@@ -1,5 +1,6 @@
 package lol // import "github.com/boostchicken/cmd/lol"
 
+
 import (
 	"context"
 	"errors"
@@ -8,15 +9,17 @@ import (
 	"os"
 	"strings"
 
+	"github.com/boostchicken/lol/query"
 	"github.com/boostchicken/lol/config"
 	"github.com/boostchicken/lol/model"
-	"github.com/boostchicken/lol/query"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 var Q *query.Query
+var t *config.LOLAction = &config.LOLAction{}
 
 func main() {
 	Q = query.Use(config.Db)
@@ -53,7 +56,8 @@ func main() {
 	r := gin.Default()
 	v1 := r.Group("/v1")
 	docs := r.Group("/docs")
-	r.Use(cors.Default(), docs.static.Serve("/api", fs), static.Serve("/", fs))
+	docs.Use(cors.Default(), static.Serve("/api", static.LocalFile("./ui/out/", true)))
+	r.Use(cors.Default(), static.Serve("/", fs))
 
 	v1.GET("/config", RenderConfig).GET("/liveconfig", RenderConfigJSON).GET("/lol", Invoke).GET("/history", RenderHistory)
 	v1.PUT("/add/:command/:type", AddCommand)
@@ -68,8 +72,13 @@ func main() {
 
 // AuthWebhook HTTP: POST /auth/webhook
 // c gin.Context
-func AuthWebhook(c *gin.Context) AuthWebhookResponse {
-	c.ProtoBuf(200, &AuthWebhookResponse{id: 1, data: {}})
+func AuthWebhook(c *gin.Context) {
+	c.Data(200, "application/json", []byte(`{"id":"`+uuid.New().String()+`"}`))
+	res := model.AuthWebhookResponse{
+		Id: uuid.New().String(),
+
+	}
+	c.JSON(200, &res)
 }
 
 // DeleteCommand HTTP: GET /config

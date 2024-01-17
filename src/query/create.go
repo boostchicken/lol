@@ -26,5 +26,5 @@ func create() {
 		fmt.Println(err3.Error())
 	}
 	fmt.Println(dbq[len(dbq)-1].GetBind())
-	newLolEntry(db).Create(&model.LolEntry{Config: conf, Command: "gx", Url: "https://www.google.com/q=%s", Type: model.CommandType_Redirect})
+	newLolEntry(db).Create(&model.LolEntry{Config: conf, Command: "go", Url: "https://www.google.com/q=%s", Type: model.CommandType_Redirect})
 }

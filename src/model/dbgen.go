@@ -1,8 +1,9 @@
-package main // import "github.com/boostchicken/lol/model"
+package model // import "github.com/boostchicken/lol/model"
 
 import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/boostchicken/lol/clients/secrets"
+	"github.com/boostchicken/lol/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gen"
 	"gorm.io/gorm"
@@ -17,6 +18,7 @@ type Querier interface {
 }
 
 func main() {
+
 	dsn, err := secrets.GetDSN()
 	if err != nil {
 		panic(err)
@@ -30,9 +32,13 @@ func main() {
 
 	g.UseDB(Db)
 	g.GenerateAllTable()
-	g.ApplyBasic(Config{}, LolEntry{})
+	g.ApplyBasic(config.Config{}, config.LolEntry{})
 
-	g.ApplyInterface(func(Querier) {}, LolEntry{})
+	g.ApplyInterface(func(Querier) {}, config.LolEntry{})
 
 	g.Execute()
+}
+
+func file_gorm_proto_init() {
+	return
 }

@@ -26,12 +26,10 @@ var CurrentConfig model.Config
 
 var cache map[string]*model.LolEntry = make(map[string]*model.LolEntry)         // A Map that caches LOLEntry BY Command
 var reflectionCache map[string]reflect.Method = make(map[string]reflect.Method) // Caches the Method associated with the Type
-
-// RehashConfig Reload the config but do not rebind
-
 // CacheConfig Generate ReflectionCache and Command Cache
 func CacheConfig() {
-	for _, e := range CurrentConfig.Entries {
+	entries := CurrentConfig.GetEntries()
+	for _, e := range entries {
 		cache[e.GetCommand()] = e
 		_, okm := reflectionCache[e.GetType().String()]
 		if !okm {

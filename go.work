@@ -2,9 +2,10 @@ go 1.21.6
 
 use (
 	src/clients/secrets
-	src/cmd
+	src/cmd/lol
 	src/config
 	src/model
+	src/protos
 	src/query
 	src/sessionstore
 )

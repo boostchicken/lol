@@ -1,29 +1,34 @@
-import "annotations.proto";
-import "google/protobuf/empty.proto";
-import "google/protobuf/descriptor.proto";
+syntax = "proto3";
+option go_package = "github.com/boostchicken/lol/model";
+
+package boostlol;
+
 import "gorm.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
 
 message ExecuteLoLRequest {
-    required string command = 1;
+    string command = 1;
 }
 message ExecuteLoLResponse {
-   required bool success = 1;
+   bool success = 1;
    optional string commmand = 2;
    optional string url = 3;
 }
 
 message History {
     option (gorm.opts) = {ormable: true};
-    required string command = 1;
-    required string result = 2;
+     string command = 1;
+     string result = 2;
 }
 
 message Config {
     option (gorm.opts) = {ormable: true};
-    required uint64 id = 1 [(gorm.field).tag = {type: "uint64" auto_increment: true primary_key: true}];
-    required string Tenant = 2  [(gorm.field).tag = {type: "string" unique:true}];
-    required string Bind = 3;
-    repeated LolEntry Entries = 4  [(gorm.field).has_many ={}];
+    uint64 id = 1 [(gorm.field).tag = {type: "uint64" auto_increment: true primary_key: true}];
+    string Tenant = 2  [(gorm.field).tag = {type: "string" unique:true}];
+     string Bind = 3;
+    LolEntry Entries = 4  [(gorm.field).has_many ={}];
 }
 
 enum CommandType {
@@ -34,64 +39,66 @@ enum CommandType {
 
 message LolEntry {
     option (gorm.opts) = {ormable: true, table: "lol_commands"};
-    required  uint64 ConfigId = 1 [(gorm.field).tag = {type: "uint64"}];
-    required Config config = 2 [(gorm.field).belongs_to = {foreignkey: "ConfigId"}];
-    required string command = 3;
-    required CommandType type = 4;
-    required string url = 5;
+     uint64 ConfigId = 1 [(gorm.field).tag = {type: "uint64"}];
+     Config config = 2 [(gorm.field).belongs_to = {foreignkey: "ConfigId"}];
+     string command = 3;
+     CommandType type = 4;
+     string url = 5;
     
 }
 
 message AddCommandRequest {
-    required string command = 1;
-    optional CommandType CommandType = 2;
-    required string url = 33;
+     string command = 1;
+     CommandType CommandType = 2;
+     string url = 33;
 }
 message AddCommandResponse {
-    required bool success = 1;
+     bool success = 1;
     optional string command = 2;
     optional string url = 3;
 }
 
 message DeleteCommandRequest {
-    required string command = 1;
+     string command = 1;
 }
 message DeleteCommandResponse {
-    required bool success = 1;
+     bool success = 1;
     optional string command = 2;
 }
 
 message GetCommandsResponse {
-    repeated LolEntry entries = 1;
+     LolEntry entries = 1;
 }
 
 message HistoryList {
-    repeated History history = 1;
+     History history = 1;
 }
+
 enum AuthWebhookAction {
-    authMethods = 1;
-    passwordVerify = 2;
+    authMethods = 0;
+    passwordVerify = 1;
 } 
+
 message AuthWebhookRequest {
     optional string id = 1;
-    required string projectID = 2;
-    required AuthWebhookAction action = 3;
+    string projectID = 2;
+    AuthWebhookAction action = 3;
     map<string, string> data = 4;
 }
 
 message AuthWebhookResponse {
-    required string id = 1;
+     string id = 1;
     map<string, string> data = 2;
 }
 
 service Execute {
     rpc LoL (ExecuteLoLRequest) returns (ExecuteLoLResponse) {
-        option google.api.http = {
+        option (google.api.http) = {
             get: "/v1/lol?q={command}"
         };
     }
     rpc HistoryChan(google.protobuf.Empty) returns (HistoryList) {
-        option google.api.http = {
+        option (google.api.http)= {
             get: "/v1/history"
         };
     }
@@ -99,7 +106,7 @@ service Execute {
 
 service Configuration {
     rpc GetLiveConfig(google.protobuf.Empty) returns (Config) {
-        option google.api.http = {
+        option (google.api.http) = {
             get: "/v1/getliveconfig"
         };
     }
@@ -107,26 +114,27 @@ service Configuration {
 
 service Auth {
     rpc AuthWebhook (AuthWebhookRequest) returns (AuthWebhookResponse) {
-        option google.api.http = {
-            POST: "/v1/auth/webhook"
+        option (google.api.http) = {
+            post: "/v1/auth/webhook"
+
         };
     
     }
 }
+
 service Commands {
- //   option (gorm.server).autogen = true;
     rpc AddCommand (AddCommandRequest) returns (AddCommandResponse) {
-        option google.api.http = {
-            put: "/v1/add/type?url={url}"
+        option (google.api.http) = {
+            put: "/v1/add/{:type?url={url}"
         };
     }
     rpc DeleteCommand (DeleteCommandRequest) returns (DeleteCommandResponse) {
-        option google.api.http = {
+        option (google.api.http) = {
             delete: "/v1/{command}"
         };
     }
     rpc GetCommands (google.protobuf.Empty) returns (GetCommandsResponse) {
-        option google.api.http = {
+        option (google.api.http) = {
             get: "/v1/commands"
         };
     }
