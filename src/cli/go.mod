@@ -1,4 +1,4 @@
-module main // import "github.com/boostchicken/lol/cmd"
+module cli // import "github.com/boostchicken/lol/cli"
 
 go 1.21.6
 
@@ -13,14 +13,15 @@ require (
 )
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.24.1
 	github.com/boostchicken/lol/clients/secrets v0.0.0-20211013185905-8b9b8b8b8b8b
 	github.com/boostchicken/lol/config v0.0.0-20230303115543-49611d96b059
 	gorm.io/driver/postgres v1.5.4
 	gorm.io/gen v0.3.25
+	gorm.io/gorm v1.25.6
 )
 
 require (
+	github.com/aws/aws-sdk-go-v2 v1.24.1 // indirect
 	github.com/aws/aws-sdk-go-v2/config v1.26.6 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.16.16 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.14.11 // indirect
@@ -77,7 +78,6 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/datatypes v1.2.0 // indirect
 	gorm.io/driver/mysql v1.5.2 // indirect
-	gorm.io/gorm v1.25.6 // indirect
 	gorm.io/hints v1.1.2 // indirect
 	gorm.io/plugin/dbresolver v1.5.0 // indirect
 )

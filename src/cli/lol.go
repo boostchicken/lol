@@ -1,13 +1,13 @@
-package cmd // import "github.com/boostchicken/lol/cmd"
+package cli // import "github.com/boostchicken/lol/cli"
 
 import (
-	"context"
 	"errors"
 	"log"
 	"net/http"
 	"os"
 	"strings"
 
+	"github.com/boostchicken/lol/clients/secrets"
 	"github.com/boostchicken/lol/config"
 	"github.com/boostchicken/lol/model"
 	"github.com/boostchicken/lol/query"
@@ -15,6 +15,9 @@ import (
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"gorm.io/driver/postgres"
+	"gorm.io/gen"
+	"gorm.io/gorm"
 )
 
 type LOLAction struct {
@@ -22,8 +25,6 @@ type LOLAction struct {
 
 var Q *query.Query
 var t *LOLAction = &LOLAction{}
-
-
 
 type Querier interface {
 	// SELECT * FROM @@table WHERE command = @command
@@ -35,7 +36,7 @@ func genDatabase() {
 	if err != nil {
 		panic(err)
 	}
-	Db, err := gorm.Open(postgres.Open(aws.ToString(dsn)), &gorm.Config{})
+	Db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	g := gen.NewGenerator(gen.Config{
 		OutPath: "../query",
@@ -55,21 +56,19 @@ func file_gorm_proto_init() {
 	return
 }
 
-
 func main() {
+	ginMode := gin.ReleaseMode
 	Q = query.Use(config.Database)
-
-	if len(config.CurrentConfig.Bind) == 0 {
-		config.CurrentConfig.Bind = "0.0.0.0:8080"
+	if len(os.Args) > 1 {
+		switch os.Args[1] {
+		case "genDb":
+			genDatabase()
+			return
+		case "debug":
+			ginMode = gin.DebugMode
+		}
 	}
-	config.CacheConfig()
-	if len(os.Args) > 1 && os.Args[1] == "debug" {
-		gin.SetMode(gin.DebugMode)
-	} else if (os.Arg > 1 && os.Args[1] == "genDb") {
-		genDatabase()!
-	}
-		gin.SetMode(gin.ReleaseMode)
-	}
+	gin.SetMode(ginMode)
 	fs := static.LocalFile("./ui/out/", true)
 	r := gin.Default()
 	v1 := r.Group("/v1")
@@ -157,14 +156,15 @@ func AddCommand(c *gin.Context) {
 	default:
 		_ = c.AbortWithError(501, errors.New("invalid type"))
 	}
-	config.CurrentConfig.Entries = append(config.CurrentConfig.Entries, &model.LolEntry{
+	current := config.CurrentConfig;
+	current.GetEntries() = append(config.CurrentConfig.Entries, &model.LolEntry{
 		Config:  &config.CurrentConfig,
 		Command: strings.ToLower(strings.TrimSpace(c.Param("command"))),
 		Type:    enumType,
 		Url:     c.Query("url")})
 
 	Q.LolEntry.Create(config.CurrentConfig.Entries...)
-	config.CacheConfig()
+	current.CacheConfig();
 	c.JSON(200, &config.CurrentConfig)
 }
 
