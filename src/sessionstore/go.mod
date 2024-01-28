@@ -1,4 +1,4 @@
-module github.com/boostchicken/lol/sessionstore
+module sessionstore
 
 go 1.21.6
 

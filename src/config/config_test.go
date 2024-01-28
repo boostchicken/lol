@@ -19,16 +19,7 @@ func Test_RedirectVarArgs(t *testing.T) {
 		action LOLAction
 	}{{
 		name: "RedirectVarargs",
-		config: model.Config{
-			Tenant: "boost",
-			Bind:   "0.0.0.0:6969",
-			Entries: []*model.LolEntry{
-				{
-					Command: "github",
-					Type:    model.CommandType_Redirect,
-					Url:     "https://www.github.com/%s/%s",
-				}},
-		},
+		config: getDefaultConfig("boost")
 		action: LOLAction{},
 	}}
 	for _, tt := range tests {

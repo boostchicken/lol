@@ -1,5 +1,4 @@
-package lol // import "github.com/boostchicken/cmd/lol"
-
+package cmd // import "github.com/boostchicken/lol/cmd"
 
 import (
 	"context"
@@ -9,39 +8,56 @@ import (
 	"os"
 	"strings"
 
-	"github.com/boostchicken/lol/query"
 	"github.com/boostchicken/lol/config"
 	"github.com/boostchicken/lol/model"
+	"github.com/boostchicken/lol/query"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
+type LOLAction struct {
+}
+
 var Q *query.Query
-var t *config.LOLAction = &config.LOLAction{}
+var t *LOLAction = &LOLAction{}
+
+
+
+type Querier interface {
+	// SELECT * FROM @@table WHERE command = @command
+	FilterWithCommand(command string) ([]gen.T, error)
+}
+
+func genDatabase() {
+	dsn, err := secrets.GetDSN()
+	if err != nil {
+		panic(err)
+	}
+	Db, err := gorm.Open(postgres.Open(aws.ToString(dsn)), &gorm.Config{})
+
+	g := gen.NewGenerator(gen.Config{
+		OutPath: "../query",
+		Mode:    gen.WithoutContext | gen.WithQueryInterface,
+	})
+
+	g.UseDB(Db)
+	g.GenerateAllTable()
+	g.ApplyBasic(model.Config{}, model.LolEntry{})
+
+	g.ApplyInterface(func(Querier) {}, model.LolEntry{})
+
+	g.Execute()
+}
+
+func file_gorm_proto_init() {
+	return
+}
+
 
 func main() {
-	Q = query.Use(config.Db)
-	c := Q.Config
-	models, err := c.WithContext(context.Background()).Where(c.Tenant.Eq("dorman")).Find()
-	if err != nil && len(models) == 0 {
-		newConf := model.Config{
-			Tenant: "dorman",
-			Bind:   "0.0.0.0:8080",
-			Entries: []*model.LolEntry{
-				{
-					Command: "g",
-					Type:    model.CommandType_Redirect,
-					Url:     "https://www.google.com/search?q=%s",
-				},
-			},
-		}
-		err2 := c.Create(&newConf)
-		if err2 != nil {
-			log.Fatal("unable to create config", err2)
-		}
-	}
+	Q = query.Use(config.Database)
 
 	if len(config.CurrentConfig.Bind) == 0 {
 		config.CurrentConfig.Bind = "0.0.0.0:8080"
@@ -49,7 +65,9 @@ func main() {
 	config.CacheConfig()
 	if len(os.Args) > 1 && os.Args[1] == "debug" {
 		gin.SetMode(gin.DebugMode)
-	} else {
+	} else if (os.Arg > 1 && os.Args[1] == "genDb") {
+		genDatabase()!
+	}
 		gin.SetMode(gin.ReleaseMode)
 	}
 	fs := static.LocalFile("./ui/out/", true)
@@ -76,7 +94,6 @@ func AuthWebhook(c *gin.Context) {
 	c.Data(200, "application/json", []byte(`{"id":"`+uuid.New().String()+`"}`))
 	res := model.AuthWebhookResponse{
 		Id: uuid.New().String(),
-
 	}
 	c.JSON(200, &res)
 }

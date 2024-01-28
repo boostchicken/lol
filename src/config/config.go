@@ -15,20 +15,31 @@ import (
 
 var ops uint64
 var wg sync.WaitGroup
-var Db *gorm.DB
+var Database *gorm.DB
 var err error
-
-type LOLAction struct {
-}
 
 // CurrentConfig the current config loaded
 var CurrentConfig model.Config
+
+func GetDefaultConfig(tenant string) {
+	return model.Config{
+		Tenant: tenant,
+		Bind:   "0.0.0.0:8080",
+		Entries: []*model.LolEntry{
+			{
+				Command: "g",
+				Type:    model.CommandType_Redirect,
+				Url:     "https://www.google.com/search?q=%s",
+			},
+		},
+	}
+}
 
 var cache map[string]*model.LolEntry = make(map[string]*model.LolEntry)         // A Map that caches LOLEntry BY Command
 var reflectionCache map[string]reflect.Method = make(map[string]reflect.Method) // Caches the Method associated with the Type
 // CacheConfig Generate ReflectionCache and Command Cache
 func CacheConfig() {
-	entries := CurrentConfig.GetEntries()
+	entries := CurrentConfig.GetEntries().
 	for _, e := range entries {
 		cache[e.GetCommand()] = e
 		_, okm := reflectionCache[e.GetType().String()]

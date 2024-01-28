@@ -6,8 +6,6 @@ package query
 
 import (
 	"context"
-
-	"github.com/boostchicken/lol/model"
 	"gorm.io/gen"
 	"gorm.io/gen/field"
 	"gorm.io/gorm"

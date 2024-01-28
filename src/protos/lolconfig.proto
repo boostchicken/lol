@@ -27,8 +27,8 @@ message Config {
     option (gorm.opts) = {ormable: true};
     uint64 id = 1 [(gorm.field).tag = {type: "uint64" auto_increment: true primary_key: true}];
     string Tenant = 2  [(gorm.field).tag = {type: "string" unique:true}];
-     string Bind = 3;
-    LolEntry Entries = 4  [(gorm.field).has_many ={}];
+    string Bind = 3;
+    repeated LolEntry Entries = 4  [(gorm.field).has_many ={}];
 }
 
 enum CommandType {

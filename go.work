@@ -2,7 +2,7 @@ go 1.21.6
 
 use (
 	src/clients/secrets
-	src/cmd/lol
+	src/cmd
 	src/config
 	src/model
 	src/protos
