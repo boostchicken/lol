@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@plasmohq/storage':
-    specifier: 1.8.0
-    version: 1.8.0(react@18.2.0)
+    specifier: 1.10.0
+    version: 1.10.0(react@18.2.0)
   bootstrap:
     specifier: ^5.3.2
     version: 5.3.2(@popperjs/core@2.11.8)
@@ -2261,8 +2261,8 @@ packages:
       - whiskers
     dev: false
 
-  /@plasmohq/storage@1.8.0(react@18.2.0):
-    resolution: {integrity: sha512-8VEVKq2takNaR6SBpRaS2KdLMwsoH91eekap1QA2M4B2CcyprSbsEMuK6HogfcD5gRBzHJAhHqwBGL9PdUJm7w==}
+  /@plasmohq/storage@1.10.0(react@18.2.0):
+    resolution: {integrity: sha512-qvxD7M/k5BNcluyFHyabm21500tRJs1itUkO4bFad0SeaSFtSmAFtNzYCpQ9ormqJAk2j9xkd5DfWHcuCSQmog==}
     peerDependencies:
       react: ^16.8.6 || ^17 || ^18
     peerDependenciesMeta:

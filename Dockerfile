@@ -1,5 +1,5 @@
 
-FROM golang:1.21.6-alpine3.18 as builder
+FROM golang:1.22.2-alpine3.18 as builder
 RUN mkdir -p /app
 WORKDIR /app
 
@@ -14,7 +14,7 @@ RUN go mod download
 WORKDIR /app
 RUN go build -ldflags "-s -w" -o /app/lol ./cmd/lol/main.go 
 
-FROM node:20-slim AS nodejs
+FROM node:22-slim AS nodejs
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable && corepack prepare pnpm@latest --activate
