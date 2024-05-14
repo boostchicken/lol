@@ -38,13 +38,11 @@ func GetDefaultConfig(tenant string) {
 var cache map[string]*model.LolEntry = make(map[string]*model.LolEntry)         // A Map that caches LOLEntry BY Command
 var reflectionCache map[string]reflect.Method = make(map[string]reflect.Method) // Caches the Method associated with the Type
 // CacheConfig Generate ReflectionCache and Command Cache
-func CacheConfig() {
-	entries := CurrentConfig.GetEntries().
-	for _, e := range entries {
+func (c Config) CacheConfig() {
+	for _, e := c.GetEntries() {
 		cache[e.GetCommand()] = e
 		_, okm := reflectionCache[e.GetType().String()]
 		if !okm {
-
 			method, okr := reflect.TypeOf(&LOLAction{}).MethodByName(e.GetType().String())
 			if !okr {
 				log.Fatalf("Unable to find function %s", e.Type)

@@ -2,5 +2,6 @@
     "cSpell.words": [
         "boostchicken"
     ],
-    "DockerRun.DisableDockerrc": true
+    "DockerRun.DisableDockerrc": true,
+    "remote.WSL.debug": true
 }

@@ -19,7 +19,7 @@ func Test_RedirectVarArgs(t *testing.T) {
 		action LOLAction
 	}{{
 		name: "RedirectVarargs",
-		config: getDefaultConfig("boost")
+		config: getDefaultConfig("boost"),
 		action: LOLAction{},
 	}}
 	for _, tt := range tests {
