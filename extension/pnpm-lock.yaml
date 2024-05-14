@@ -12,7 +12,7 @@ dependencies:
     specifier: ^5.3.2
     version: 5.3.2(@popperjs/core@2.11.8)
   next:
-    specifier: ^14.0.0
+    specifier: ^14.1.1
     version: 14.1.1(@babel/core@7.22.17)(react-dom@18.2.0)(react@18.2.0)
   plasmo:
     specifier: 0.83.0
@@ -2893,6 +2893,10 @@ packages:
 
   /caniuse-lite@1.0.30001617:
     resolution: {integrity: sha512-mLyjzNI9I+Pix8zwcrpxEbGlfqOkF9kM3ptzmKNw5tizSyYwMe+nGLTqMK9cO+0E+Bh6TsBxNAaHWEM8xwSsmA==}
+
+  /caniuse-lite@1.0.30001617:
+    resolution: {integrity: sha512-mLyjzNI9I+Pix8zwcrpxEbGlfqOkF9kM3ptzmKNw5tizSyYwMe+nGLTqMK9cO+0E+Bh6TsBxNAaHWEM8xwSsmA==}
+    dev: false
 
   /capital-case@1.0.4:
     resolution: {integrity: sha512-ds37W8CytHgwnhGGTi88pcPyR15qoNkOpYwmMMfnWqqWgESapLqvDx6huFjQ5vqWSn2Z06173XNA7LtMOeUh1A==}
