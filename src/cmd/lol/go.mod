@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/boostchicken/internal/config v0.0.0-00010101000000-000000000000
 	github.com/gin-contrib/cors v1.7.2
-	github.com/gin-gonic/contrib v0.0.0-20221130124618-7e01895a63f2
+	github.com/gin-gonic/contrib v0.0.0-20240508051311-c1c6bf0061b0
 	github.com/gin-gonic/gin v1.9.1
 	gopkg.in/yaml.v3 v3.0.1
 )
