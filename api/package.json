@@ -30,7 +30,7 @@
   "dependencies": {
     "@kubb/core": "1.14.9",
     "@kubb/swagger": "1.14.9",
-    "@kubb/swagger-swr": "1.11.6",
+    "@kubb/swagger-swr": "1.14.9",
     "@kubb/swagger-ts": "1.14.9",
     "axios": "^1.6.0",
     "swr": "^2.2.4",
